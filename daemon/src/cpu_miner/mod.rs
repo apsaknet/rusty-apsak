@@ -40,7 +40,7 @@ impl TryFrom<CpuMinerConfig> for Vec<String> {
         let mut argv = Vec::new();
 
         if args.path.is_none() {
-            return Err(Error::Custom("no kaspad path is specified".to_string()));
+            return Err(Error::Custom("no apsakd path is specified".to_string()));
         }
 
         if args.network.is_none() {
@@ -56,11 +56,11 @@ impl TryFrom<CpuMinerConfig> for Vec<String> {
 
         match network {
             NetworkType::Mainnet => {
-                argv.push("--port=16110");
+                argv.push("--port=17110");
             }
             NetworkType::Testnet => {
                 argv.push("--testnet");
-                argv.push("--port=16210");
+                argv.push("--port=17210");
             }
             _ => {
                 return Err(Error::Custom("network type is not suported by the CPU miner".to_string()));
@@ -68,7 +68,7 @@ impl TryFrom<CpuMinerConfig> for Vec<String> {
         }
 
         let server = args.server.unwrap_or("127.0.0.1".to_string());
-        let server = format!("--kaspad-address={server}");
+        let server = format!("--apsakd-address={server}");
         argv.push(server.as_str());
 
         if args.address.is_none() {
@@ -178,7 +178,7 @@ impl CpuMiner {
             self.mute.load(Ordering::SeqCst),
         );
 
-        // let options = KaspadOptions::new(path,network)?;
+        // let options = ApsakdOptions::new(path,network)?;
         let process = Arc::new(Process::new(options));
         self.inner().process.replace(process.clone());
         process.run()?;

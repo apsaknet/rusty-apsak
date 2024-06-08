@@ -63,11 +63,11 @@ use crate::tx::{
     PendingTransactionStream,
 };
 use crate::utxo::{NetworkParams, UtxoContext, UtxoEntryReference};
-use kaspa_consensus_client::UtxoEntry;
-use kaspa_consensus_core::constants::UNACCEPTED_DAA_SCORE;
-use kaspa_consensus_core::subnets::SUBNETWORK_ID_NATIVE;
-use kaspa_consensus_core::tx::{Transaction, TransactionInput, TransactionOutpoint, TransactionOutput};
-use kaspa_txscript::pay_to_address_script;
+use apsak_consensus_client::UtxoEntry;
+use apsak_consensus_core::constants::UNACCEPTED_DAA_SCORE;
+use apsak_consensus_core::subnets::SUBNETWORK_ID_NATIVE;
+use apsak_consensus_core::tx::{Transaction, TransactionInput, TransactionOutpoint, TransactionOutput};
+use apsak_txscript::pay_to_address_script;
 use std::collections::VecDeque;
 
 use super::SignerT;
@@ -492,7 +492,7 @@ impl Generator {
         &self.inner.signer
     }
 
-    /// The total amount of fees in SOMPI consumed during the transaction generation process.
+    /// The total amount of fees in IPMOS consumed during the transaction generation process.
     pub fn aggregate_fees(&self) -> u64 {
         self.context().aggregate_fees
     }

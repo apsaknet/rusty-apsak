@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-rpc-service"
-description = "Kaspa RPC service"
+name = "apsak-rpc-service"
+description = "apsaK RPC service"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -10,24 +10,24 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-kaspa-addresses.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensus-notify.workspace = true
-kaspa-consensusmanager.workspace = true
-kaspa-core.workspace = true
-kaspa-hashes.workspace = true
-kaspa-index-core.workspace = true
-kaspa-math.workspace = true
-kaspa-mining.workspace = true
-kaspa-notify.workspace = true
-kaspa-p2p-flows.workspace = true
-kaspa-p2p-lib.workspace = true
-kaspa-perf-monitor.workspace = true
-kaspa-rpc-core.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
-kaspa-utils-tower.workspace = true
-kaspa-utxoindex.workspace = true
+apsak-addresses.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensus-notify.workspace = true
+apsak-consensusmanager.workspace = true
+apsak-core.workspace = true
+apsak-hashes.workspace = true
+apsak-index-core.workspace = true
+apsak-math.workspace = true
+apsak-mining.workspace = true
+apsak-notify.workspace = true
+apsak-p2p-flows.workspace = true
+apsak-p2p-lib.workspace = true
+apsak-perf-monitor.workspace = true
+apsak-rpc-core.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
+apsak-utils-tower.workspace = true
+apsak-utxoindex.workspace = true
 
 async-trait.workspace = true
 log.workspace = true

@@ -3,60 +3,60 @@
 //!
 
 use async_channel::unbounded;
-use kaspa_alloc::init_allocator_with_default_settings;
-use kaspa_consensus::config::genesis::GENESIS;
-use kaspa_consensus::config::{Config, ConfigBuilder};
-use kaspa_consensus::consensus::factory::Factory as ConsensusFactory;
-use kaspa_consensus::consensus::test_consensus::{TestConsensus, TestConsensusFactory};
-use kaspa_consensus::model::stores::block_transactions::{
+use apsak_alloc::init_allocator_with_default_settings;
+use apsak_consensus::config::genesis::GENESIS;
+use apsak_consensus::config::{Config, ConfigBuilder};
+use apsak_consensus::consensus::factory::Factory as ConsensusFactory;
+use apsak_consensus::consensus::test_consensus::{TestConsensus, TestConsensusFactory};
+use apsak_consensus::model::stores::block_transactions::{
     BlockTransactionsStore, BlockTransactionsStoreReader, DbBlockTransactionsStore,
 };
-use kaspa_consensus::model::stores::ghostdag::{GhostdagStoreReader, KType as GhostdagKType};
-use kaspa_consensus::model::stores::headers::HeaderStoreReader;
-use kaspa_consensus::model::stores::reachability::DbReachabilityStore;
-use kaspa_consensus::model::stores::relations::DbRelationsStore;
-use kaspa_consensus::model::stores::selected_chain::SelectedChainStoreReader;
-use kaspa_consensus::params::{Params, DEVNET_PARAMS, MAINNET_PARAMS, MAX_DIFFICULTY_TARGET, MAX_DIFFICULTY_TARGET_AS_F64};
-use kaspa_consensus::pipeline::monitor::ConsensusMonitor;
-use kaspa_consensus::pipeline::ProcessingCounters;
-use kaspa_consensus::processes::reachability::tests::{DagBlock, DagBuilder, StoreValidationExtensions};
-use kaspa_consensus::processes::window::{WindowManager, WindowType};
-use kaspa_consensus_core::api::{BlockValidationFutures, ConsensusApi};
-use kaspa_consensus_core::block::Block;
-use kaspa_consensus_core::blockhash::new_unique;
-use kaspa_consensus_core::blockstatus::BlockStatus;
-use kaspa_consensus_core::constants::{BLOCK_VERSION, STORAGE_MASS_PARAMETER};
-use kaspa_consensus_core::errors::block::{BlockProcessResult, RuleError};
-use kaspa_consensus_core::header::Header;
-use kaspa_consensus_core::network::{NetworkId, NetworkType::Mainnet};
-use kaspa_consensus_core::subnets::SubnetworkId;
-use kaspa_consensus_core::trusted::{ExternalGhostdagData, TrustedBlock};
-use kaspa_consensus_core::tx::{ScriptPublicKey, Transaction, TransactionInput, TransactionOutpoint, TransactionOutput, UtxoEntry};
-use kaspa_consensus_core::{blockhash, hashing, BlockHashMap, BlueWorkType};
-use kaspa_consensus_notify::root::ConsensusNotificationRoot;
-use kaspa_consensus_notify::service::NotifyService;
-use kaspa_consensusmanager::ConsensusManager;
-use kaspa_core::task::tick::TickService;
-use kaspa_core::time::unix_now;
-use kaspa_database::utils::get_kaspa_tempdir;
-use kaspa_hashes::Hash;
+use apsak_consensus::model::stores::ghostdag::{GhostdagStoreReader, KType as GhostdagKType};
+use apsak_consensus::model::stores::headers::HeaderStoreReader;
+use apsak_consensus::model::stores::reachability::DbReachabilityStore;
+use apsak_consensus::model::stores::relations::DbRelationsStore;
+use apsak_consensus::model::stores::selected_chain::SelectedChainStoreReader;
+use apsak_consensus::params::{Params, DEVNET_PARAMS, MAINNET_PARAMS, MAX_DIFFICULTY_TARGET, MAX_DIFFICULTY_TARGET_AS_F64};
+use apsak_consensus::pipeline::monitor::ConsensusMonitor;
+use apsak_consensus::pipeline::ProcessingCounters;
+use apsak_consensus::processes::reachability::tests::{DagBlock, DagBuilder, StoreValidationExtensions};
+use apsak_consensus::processes::window::{WindowManager, WindowType};
+use apsak_consensus_core::api::{BlockValidationFutures, ConsensusApi};
+use apsak_consensus_core::block::Block;
+use apsak_consensus_core::blockhash::new_unique;
+use apsak_consensus_core::blockstatus::BlockStatus;
+use apsak_consensus_core::constants::{BLOCK_VERSION, STORAGE_MASS_PARAMETER};
+use apsak_consensus_core::errors::block::{BlockProcessResult, RuleError};
+use apsak_consensus_core::header::Header;
+use apsak_consensus_core::network::{NetworkId, NetworkType::Mainnet};
+use apsak_consensus_core::subnets::SubnetworkId;
+use apsak_consensus_core::trusted::{ExternalGhostdagData, TrustedBlock};
+use apsak_consensus_core::tx::{ScriptPublicKey, Transaction, TransactionInput, TransactionOutpoint, TransactionOutput, UtxoEntry};
+use apsak_consensus_core::{blockhash, hashing, BlockHashMap, BlueWorkType};
+use apsak_consensus_notify::root::ConsensusNotificationRoot;
+use apsak_consensus_notify::service::NotifyService;
+use apsak_consensusmanager::ConsensusManager;
+use apsak_core::task::tick::TickService;
+use apsak_core::time::unix_now;
+use apsak_database::utils::get_apsak_tempdir;
+use apsak_hashes::Hash;
 
 use flate2::read::GzDecoder;
 use futures_util::future::try_join_all;
 use itertools::Itertools;
-use kaspa_core::core::Core;
-use kaspa_core::signals::Shutdown;
-use kaspa_core::task::runtime::AsyncRuntime;
-use kaspa_core::{assert_match, info};
-use kaspa_database::create_temp_db;
-use kaspa_database::prelude::{CachePolicy, ConnBuilder};
-use kaspa_index_processor::service::IndexService;
-use kaspa_math::Uint256;
-use kaspa_muhash::MuHash;
-use kaspa_notify::subscription::context::SubscriptionContext;
-use kaspa_txscript::caches::TxScriptCacheCounters;
-use kaspa_utxoindex::api::{UtxoIndexApi, UtxoIndexProxy};
-use kaspa_utxoindex::UtxoIndex;
+use apsak_core::core::Core;
+use apsak_core::signals::Shutdown;
+use apsak_core::task::runtime::AsyncRuntime;
+use apsak_core::{assert_match, info};
+use apsak_database::create_temp_db;
+use apsak_database::prelude::{CachePolicy, ConnBuilder};
+use apsak_index_processor::service::IndexService;
+use apsak_math::Uint256;
+use apsak_muhash::MuHash;
+use apsak_notify::subscription::context::SubscriptionContext;
+use apsak_txscript::caches::TxScriptCacheCounters;
+use apsak_utxoindex::api::{UtxoIndexApi, UtxoIndexProxy};
+use apsak_utxoindex::UtxoIndex;
 use serde::{Deserialize, Serialize};
 use std::cmp::{max, Ordering};
 use std::collections::HashSet;
@@ -772,7 +772,7 @@ struct RPCUTXOEntry {
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-struct KaspadGoParams {
+struct ApsakdGoParams {
     K: GhostdagKType,
     TimestampDeviationTolerance: u64,
     TargetTimePerBlock: u64,
@@ -794,7 +794,7 @@ struct KaspadGoParams {
     PruningProofM: u64,
 }
 
-impl KaspadGoParams {
+impl ApsakdGoParams {
     fn into_params(self) -> Params {
         let finality_depth = self.FinalityDuration / self.TargetTimePerBlock;
         Params {
@@ -908,13 +908,13 @@ fn gzip_file_lines(path: &Path) -> impl Iterator<Item = String> {
 }
 
 async fn json_test(file_path: &str, concurrency: bool) {
-    kaspa_core::log::try_init_logger("info");
+    apsak_core::log::try_init_logger("info");
     let main_path = Path::new(file_path);
     let proof_exists = common::file_exists(&main_path.join("proof.json.gz"));
 
     let mut lines = gzip_file_lines(&main_path.join("blocks.json.gz"));
     let first_line = lines.next().unwrap();
-    let go_params_res: Result<KaspadGoParams, _> = serde_json::from_str(&first_line);
+    let go_params_res: Result<ApsakdGoParams, _> = serde_json::from_str(&first_line);
     let params = if let Ok(go_params) = go_params_res {
         let mut params = go_params.into_params();
         if !proof_exists {
@@ -1434,7 +1434,7 @@ async fn difficulty_test() {
         },
     ];
 
-    kaspa_core::log::try_init_logger("info");
+    apsak_core::log::try_init_logger("info");
     for test in tests.iter().filter(|x| x.enabled) {
         let consensus = TestConsensus::new(&test.config);
         let wait_handles = consensus.init();
@@ -1650,7 +1650,7 @@ async fn difficulty_test() {
 #[tokio::test]
 async fn selected_chain_test() {
     init_allocator_with_default_settings();
-    kaspa_core::log::try_init_logger("info");
+    apsak_core::log::try_init_logger("info");
 
     let config = ConfigBuilder::new(MAINNET_PARAMS)
         .skip_proof_of_work()
@@ -1721,12 +1721,12 @@ async fn staging_consensus_test() {
     init_allocator_with_default_settings();
     let config = ConfigBuilder::new(MAINNET_PARAMS).build();
 
-    let db_tempdir = get_kaspa_tempdir();
+    let db_tempdir = get_apsak_tempdir();
     let db_path = db_tempdir.path().to_owned();
     let consensus_db_dir = db_path.join("consensus");
     let meta_db_dir = db_path.join("meta");
 
-    let meta_db = kaspa_database::prelude::ConnBuilder::default().with_db_path(meta_db_dir).with_files_limit(5).build().unwrap();
+    let meta_db = apsak_database::prelude::ConnBuilder::default().with_db_path(meta_db_dir).with_files_limit(5).build().unwrap();
 
     let (notification_send, _notification_recv) = unbounded();
     let notification_root = Arc::new(ConsensusNotificationRoot::new(notification_send));

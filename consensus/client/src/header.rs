@@ -1,9 +1,9 @@
 use crate::error::Error;
 use js_sys::{Array, Object};
-use kaspa_consensus_core::hashing;
-use kaspa_consensus_core::header as native;
-use kaspa_hashes::Hash;
-use kaspa_utils::hex::ToHex;
+use apsak_consensus_core::hashing;
+use apsak_consensus_core::header as native;
+use apsak_hashes::Hash;
+use apsak_utils::hex::ToHex;
 use serde::{Deserialize, Serialize};
 use serde_wasm_bindgen::*;
 use wasm_bindgen::prelude::*;

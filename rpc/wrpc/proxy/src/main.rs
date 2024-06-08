@@ -2,13 +2,13 @@ mod error;
 mod result;
 
 use clap::Parser;
-use kaspa_consensus_core::network::NetworkType;
-use kaspa_rpc_core::api::ops::RpcApiOps;
-use kaspa_wrpc_server::{
+use apsak_consensus_core::network::NetworkType;
+use apsak_rpc_core::api::ops::RpcApiOps;
+use apsak_wrpc_server::{
     connection::Connection,
     router::Router,
     server::Server,
-    service::{KaspaRpcHandler, Options},
+    service::{ApsakRpcHandler, Options},
 };
 use result::Result;
 use std::sync::Arc;
@@ -30,12 +30,12 @@ struct Args {
     #[clap(long)]
     devnet: bool,
 
-    /// proxy:port for gRPC server (grpc://127.0.0.1:16110)
+    /// proxy:port for gRPC server (grpc://127.0.0.1:17110)
     #[clap(name = "grpc")]
     grpc_proxy_address: Option<String>,
 
     // /// wRPC port
-    /// interface:port for wRPC server (wrpc://127.0.0.1:17110)
+    /// interface:port for wRPC server (wrpc://127.0.0.1:17120)
     #[clap(long)]
     interface: Option<String>,
     /// Number of notification serializer threads
@@ -63,7 +63,7 @@ async fn main() -> Result<()> {
         NetworkType::Mainnet
     };
 
-    let kaspad_port = network_type.default_rpc_port();
+    let apsakd_port = network_type.default_rpc_port();
 
     let encoding: Encoding = encoding.unwrap_or_else(|| "borsh".to_owned()).parse()?;
     let proxy_port = match encoding {
@@ -73,7 +73,7 @@ async fn main() -> Result<()> {
 
     let options = Arc::new(Options {
         listen_address: interface.unwrap_or_else(|| format!("wrpc://127.0.0.1:{proxy_port}")),
-        grpc_proxy_address: Some(grpc_proxy_address.unwrap_or_else(|| format!("grpc://127.0.0.1:{kaspad_port}"))),
+        grpc_proxy_address: Some(grpc_proxy_address.unwrap_or_else(|| format!("grpc://127.0.0.1:{apsakd_port}"))),
         verbose,
         // ..Options::default()
     });
@@ -82,7 +82,7 @@ async fn main() -> Result<()> {
 
     let counters = Arc::new(WebSocketCounters::default());
     let tasks = threads.unwrap_or_else(num_cpus::get);
-    let rpc_handler = Arc::new(KaspaRpcHandler::new(tasks, encoding, None, options.clone()));
+    let rpc_handler = Arc::new(ApsakRpcHandler::new(tasks, encoding, None, options.clone()));
 
     let router = Arc::new(Router::new(rpc_handler.server.clone()));
     let server = RpcServer::new_with_encoding::<Server, Connection, RpcApiOps, Id64>(
@@ -92,7 +92,7 @@ async fn main() -> Result<()> {
         Some(counters),
     );
 
-    log_info!("Kaspa wRPC server is listening on {}", options.listen_address);
+    log_info!("apsaK wRPC server is listening on {}", options.listen_address);
     log_info!("Using `{encoding}` protocol encoding");
 
     let config = WebSocketConfig { max_message_size: Some(1024 * 1024 * 1024), ..Default::default() };

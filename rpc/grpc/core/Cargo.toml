@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-grpc-core"
-description = "Kaspa gRPC core"
+name = "apsak-grpc-core"
+description = "apsaK gRPC core"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -10,11 +10,11 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-kaspa-consensus-core.workspace = true
-kaspa-core.workspace = true
-kaspa-notify.workspace = true
-kaspa-rpc-core.workspace = true
-kaspa-utils.workspace = true
+apsak-consensus-core.workspace = true
+apsak-core.workspace = true
+apsak-notify.workspace = true
+apsak-rpc-core.workspace = true
+apsak-utils.workspace = true
 
 async-channel.workspace = true
 async-stream.workspace = true

@@ -1,11 +1,11 @@
 // W3C WebSocket module shim
 globalThis.WebSocket = require('websocket').w3cwebsocket;
 
-let {RpcClient,Encoding,initConsolePanicHook,defer} = require('./kaspa-rpc');
+let {RpcClient,Encoding,initConsolePanicHook,defer} = require('./apsak-rpc');
 initConsolePanicHook();
 
 const MAX_NOTIFICATION = 10;
-let url = "ws://127.0.0.1:17110";
+let url = "ws://127.0.0.1:17120";
 let rpc = new RpcClient({
     url,
     encoding : Encoding.Borsh,

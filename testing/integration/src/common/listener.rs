@@ -1,7 +1,7 @@
 use async_channel::Receiver;
-use kaspa_grpc_client::GrpcClient;
-use kaspa_notify::{connection::ChannelType, events::EventType, listener::ListenerId, scope::Scope, subscription::Command};
-use kaspa_rpc_core::{api::rpc::RpcApi, notify::connection::ChannelConnection, Notification, RpcResult};
+use apsak_grpc_client::GrpcClient;
+use apsak_notify::{connection::ChannelType, events::EventType, listener::ListenerId, scope::Scope, subscription::Command};
+use apsak_rpc_core::{api::rpc::RpcApi, notify::connection::ChannelConnection, Notification, RpcResult};
 
 /// An event type bound notification listener
 #[derive(Clone)]

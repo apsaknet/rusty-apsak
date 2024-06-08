@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-metrics-core"
-description = "Tools for collecting and reporting Kaspa p2p node metrics"
+name = "apsak-metrics-core"
+description = "Tools for collecting and reporting apsaK p2p node metrics"
 rust-version.workspace = true
 version.workspace = true
 authors.workspace = true
@@ -13,8 +13,8 @@ repository.workspace = true
 async-trait.workspace = true
 borsh.workspace = true
 futures.workspace = true
-kaspa-core.workspace = true
-kaspa-rpc-core.workspace = true
+apsak-core.workspace = true
+apsak-rpc-core.workspace = true
 separator.workspace = true
 serde.workspace = true
 thiserror.workspace = true

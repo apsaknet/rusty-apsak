@@ -6,11 +6,11 @@ use crate::mempool::{
     },
     Mempool,
 };
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     api::ConsensusApi,
     tx::{Transaction, TransactionId},
 };
-use kaspa_core::time::Stopwatch;
+use apsak_core::time::Stopwatch;
 use std::{collections::HashSet, sync::atomic::Ordering};
 
 impl Mempool {

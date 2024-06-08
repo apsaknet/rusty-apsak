@@ -1,7 +1,7 @@
 use derive_more::Display;
-use kaspa_consensus_core::{acceptance_data::AcceptanceData, block::Block, utxo::utxo_diff::UtxoDiff};
-use kaspa_hashes::Hash;
-use kaspa_notify::{
+use apsak_consensus_core::{acceptance_data::AcceptanceData, block::Block, utxo::utxo_diff::UtxoDiff};
+use apsak_hashes::Hash;
+use apsak_notify::{
     events::EventType,
     full_featured,
     notification::Notification as NotificationTrait,

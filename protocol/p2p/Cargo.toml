@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-p2p-lib"
-description = "Kaspa p2p library"
+name = "apsak-p2p-lib"
+description = "apsaK p2p library"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -13,21 +13,21 @@ repository.workspace = true
 path = "./src/lib.rs"
 
 [[bin]]
-name = "kaspa_p2p_client"
+name = "apsak_p2p_client"
 path = "./src/bin/client.rs"
 
 [[bin]]
-name = "kaspa_p2p_server"
+name = "apsak_p2p_server"
 path = "./src/bin/server.rs"
 
 [dependencies]
-kaspa-core.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-mining-errors.workspace = true
-kaspa-hashes.workspace = true
-kaspa-math.workspace = true
-kaspa-utils.workspace = true
-kaspa-utils-tower.workspace = true
+apsak-core.workspace = true
+apsak-consensus-core.workspace = true
+apsak-mining-errors.workspace = true
+apsak-hashes.workspace = true
+apsak-math.workspace = true
+apsak-utils.workspace = true
+apsak-utils-tower.workspace = true
 
 borsh.workspace = true
 ctrlc.workspace = true

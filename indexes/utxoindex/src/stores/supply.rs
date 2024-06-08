@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use kaspa_database::{
+use apsak_database::{
     prelude::{CachedDbItem, DirectDbWriter, StoreResult, DB},
     registry::DatabaseStorePrefixes,
 };

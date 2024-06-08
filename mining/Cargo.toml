@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-mining"
-description = "Kaspa mining"
+name = "apsak-mining"
+description = "apsaK mining"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -10,15 +10,15 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-kaspa-addresses.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensusmanager.workspace = true
-kaspa-core.workspace = true
-kaspa-hashes.workspace = true
-kaspa-mining-errors.workspace = true
-kaspa-muhash.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
+apsak-addresses.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensusmanager.workspace = true
+apsak-core.workspace = true
+apsak-hashes.workspace = true
+apsak-mining-errors.workspace = true
+apsak-muhash.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
 
 futures-util.workspace = true
 itertools.workspace = true
@@ -31,7 +31,7 @@ thiserror.workspace = true
 tokio = { workspace = true, features = [ "rt-multi-thread", "macros", "signal" ] }
 
 [dev-dependencies]
-kaspa-txscript.workspace = true
+apsak-txscript.workspace = true
 criterion.workspace = true
 secp256k1.workspace = true
 

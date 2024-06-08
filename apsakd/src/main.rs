@@ -1,13 +1,13 @@
-extern crate kaspa_consensus;
-extern crate kaspa_core;
-extern crate kaspa_hashes;
+extern crate apsak_consensus;
+extern crate apsak_core;
+extern crate apsak_hashes;
 
 use std::sync::Arc;
 
-use kaspa_alloc::init_allocator_with_default_settings;
-use kaspa_core::{info, signals::Signals};
-use kaspa_utils::fd_budget;
-use kaspad_lib::{
+use apsak_alloc::init_allocator_with_default_settings;
+use apsak_core::{info, signals::Signals};
+use apsak_utils::fd_budget;
+use apsakd_lib::{
     args::parse_args,
     daemon::{create_core, DESIRED_DAEMON_SOFT_FD_LIMIT, MINIMUM_DAEMON_SOFT_FD_LIMIT},
 };
@@ -18,7 +18,7 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 
 pub fn main() {
     #[cfg(feature = "heap")]
-    let _profiler = dhat::Profiler::builder().file_name("kaspad-heap.json").build();
+    let _profiler = dhat::Profiler::builder().file_name("apsakd-heap.json").build();
 
     init_allocator_with_default_settings();
 
@@ -28,14 +28,14 @@ pub fn main() {
         Ok(limit) => {
             if limit < MINIMUM_DAEMON_SOFT_FD_LIMIT {
                 println!("Current OS file descriptor limit (soft FD limit) is set to {limit}");
-                println!("The kaspad node requires a setting of at least {DESIRED_DAEMON_SOFT_FD_LIMIT} to operate properly.");
+                println!("The apsakd node requires a setting of at least {DESIRED_DAEMON_SOFT_FD_LIMIT} to operate properly.");
                 println!("Please increase the limits using the following command:");
                 println!("ulimit -n {DESIRED_DAEMON_SOFT_FD_LIMIT}");
             }
         }
         Err(err) => {
             println!("Unable to initialize the necessary OS file descriptor limit (soft FD limit) to: {}", err);
-            println!("The kaspad node requires a setting of at least {DESIRED_DAEMON_SOFT_FD_LIMIT} to operate properly.");
+            println!("The apsakd node requires a setting of at least {DESIRED_DAEMON_SOFT_FD_LIMIT} to operate properly.");
         }
     }
 
@@ -46,5 +46,5 @@ pub fn main() {
     Arc::new(Signals::new(&core)).init();
 
     core.run();
-    info!("Kaspad has stopped...");
+    info!("Apsakd has stopped...");
 }

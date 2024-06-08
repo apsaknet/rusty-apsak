@@ -1,6 +1,6 @@
 [package]
 name = "rothschild"
-description = "Kaspa Transaction Generator"
+description = "apsaK Transaction Generator"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -10,14 +10,14 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-kaspa-addresses.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-core.workspace = true
-kaspa-grpc-client.workspace = true
-kaspa-notify.workspace = true
-kaspa-rpc-core.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
+apsak-addresses.workspace = true
+apsak-consensus-core.workspace = true
+apsak-core.workspace = true
+apsak-grpc-client.workspace = true
+apsak-notify.workspace = true
+apsak-rpc-core.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
 
 async-channel.workspace = true
 clap.workspace = true

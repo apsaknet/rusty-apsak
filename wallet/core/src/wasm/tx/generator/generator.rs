@@ -22,7 +22,7 @@ const TS_GENERATOR_SETTINGS_OBJECT: &'static str = r#"
  * transactions as a source for the "final" transaction.
  * 
  * @see 
- *      {@link kaspaToSompi},
+ *      {@link apsakToipmoS},
  *      {@link Generator}, 
  *      {@link PendingTransaction}, 
  *      {@link UtxoContext}, 
@@ -35,7 +35,7 @@ interface IGeneratorSettingsObject {
     /** 
      * Final transaction outputs (do not supply change transaction).
      * 
-     * Typical usage: { address: "kaspa:...", amount: 1000n }
+     * Typical usage: { address: "apsak:...", amount: 1000n }
      */
     outputs: PaymentOutput | IPaymentOutput[];
     /** 
@@ -43,7 +43,7 @@ interface IGeneratorSettingsObject {
      */
     changeAddress: Address | string;
     /** 
-     * Priority fee in SOMPI.
+     * Priority fee in IPMOS.
      * 
      * If supplying `bigint` value, it will be interpreted as a sender-pays fee.
      * Alternatively you can supply an object with `amount` and `source` properties
@@ -107,10 +107,10 @@ extern "C" {
 ///
 /// let generator = new Generator({
 ///     utxoEntries : [...],
-///     changeAddress : "kaspa:...",
+///     changeAddress : "apsak:...",
 ///     outputs : [
-///         { amount : kaspaToSompi(10.0), address: "kaspa:..."},
-///         { amount : kaspaToSompi(20.0), address: "kaspa:..."},
+///         { amount : apsakToipmoS(10.0), address: "apsak:..."},
+///         { amount : apsakToipmoS(20.0), address: "apsak:..."},
 ///         ...
 ///     ],
 ///     priorityFee : 1000n,

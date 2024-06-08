@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
-use kaspa_addressmanager::NetAddress;
-use kaspa_connectionmanager::ConnectionManager;
-use kaspa_core::{
+use apsak_addressmanager::NetAddress;
+use apsak_connectionmanager::ConnectionManager;
+use apsak_core::{
     task::service::{AsyncService, AsyncServiceFuture},
     trace,
 };
-use kaspa_p2p_lib::Adaptor;
-use kaspa_utils::triggers::SingleTrigger;
-use kaspa_utils_tower::counters::TowerConnectionCounters;
+use apsak_p2p_lib::Adaptor;
+use apsak_utils::triggers::SingleTrigger;
+use apsak_utils_tower::counters::TowerConnectionCounters;
 
 use crate::flow_context::FlowContext;
 

@@ -1,14 +1,14 @@
-use crate::cli::KaspaCli;
+use crate::cli::ApsakCli;
 use crate::imports::*;
 use crate::result::Result;
-use kaspa_bip32::{Language, Mnemonic, WordCount};
-use kaspa_wallet_core::account::MULTISIG_ACCOUNT_KIND;
-// use kaspa_wallet_core::runtime::wallet::AccountCreateArgsBip32;
-// use kaspa_wallet_core::runtime::{PrvKeyDataArgs, PrvKeyDataCreateArgs};
-// use kaspa_wallet_core::storage::AccountKind;
+use apsak_bip32::{Language, Mnemonic, WordCount};
+use apsak_wallet_core::account::MULTISIG_ACCOUNT_KIND;
+// use apsak_wallet_core::runtime::wallet::AccountCreateArgsBip32;
+// use apsak_wallet_core::runtime::{PrvKeyDataArgs, PrvKeyDataCreateArgs};
+// use apsak_wallet_core::storage::AccountKind;
 
 pub(crate) async fn create(
-    ctx: &Arc<KaspaCli>,
+    ctx: &Arc<ApsakCli>,
     prv_key_data_info: Arc<PrvKeyDataInfo>,
     account_kind: AccountKind,
     name: Option<&str>,
@@ -54,7 +54,7 @@ pub(crate) async fn create(
     Ok(())
 }
 
-async fn create_multisig(ctx: &Arc<KaspaCli>, account_name: Option<String>, mnemonic_phrase_word_count: WordCount) -> Result<()> {
+async fn create_multisig(ctx: &Arc<ApsakCli>, account_name: Option<String>, mnemonic_phrase_word_count: WordCount) -> Result<()> {
     let term = ctx.term();
     let wallet = ctx.wallet();
     let (wallet_secret, _) = ctx.ask_wallet_secret(None).await?;

@@ -4,14 +4,14 @@ globalThis.WebSocket = require('websocket').w3cwebsocket; // W3C WebSocket modul
 
 const path = require('path');
 const fs = require('fs');
-const kaspa = require('../../../../nodejs/kaspa');
+const apsak = require('../../../../nodejs/apsak');
 const {
     Wallet, setDefaultStorageFolder,
     AccountKind, Mnemonic, Resolver,
-    kaspaToSompi,
-    sompiToKaspaString,
+    apsakToipmoS,
+    ipmosToapsaKString,
     Address
-} = kaspa;
+} = apsak;
 
 let storageFolder = path.join(__dirname, '../../../data/wallets').normalize();
 if (!fs.existsSync(storageFolder)) {
@@ -79,7 +79,7 @@ setDefaultStorageFolder(storageFolder);
             list.push({
                 Id: tx.id,
                 Type: tx.data.type,
-                Value: sompiToKaspaString(value(tx)||0)
+                Value: ipmosToapsaKString(value(tx)||0)
             });
             //console.log("tx.data", tx.id, tx.data)
         });
@@ -132,9 +132,9 @@ setDefaultStorageFolder(storageFolder);
                     Object.keys(balance).map(id=>{
                         list.push({
                             Account: id.substring(0, 5)+"...",
-                            Mature: sompiToKaspaString(data.balance.mature),
-                            Pending: sompiToKaspaString(data.balance.pending),
-                            Outgoing: sompiToKaspaString(data.balance.outgoing),
+                            Mature: ipmosToapsaKString(data.balance.mature),
+                            Pending: ipmosToapsaKString(data.balance.pending),
+                            Outgoing: ipmosToapsaKString(data.balance.outgoing),
                             MatureUtxo: data.balance.matureUtxoCount,
                             PendingUtxo: data.balance.pendingUtxoCount,
                             StasisUtxo: data.balance.stasisUtxoCount
@@ -228,24 +228,24 @@ setDefaultStorageFolder(storageFolder);
         // });
         // console.log("sweepResult", sweepResult)
 
-        // Send kaspa to address
+        // Send apsak to address
         let sendResult = await wallet.accountsSend({
             walletSecret,
             accountId: firstAccount.accountId,
-            priorityFeeSompi: kaspaToSompi("0.001"),
+            priorityFeeipmoS: apsakToipmoS("0.1"),
             destination:[{
                 address: firstAccount.changeAddress,
-                amount: kaspaToSompi("1.5")
+                amount: apsakToipmoS("1.5")
             }]
         });
         console.log("sendResult", sendResult);
 
-        // Transfer kaspa between accounts
+        // Transfer apsak between accounts
         let transferResult = await wallet.accountsTransfer({
             walletSecret,
             sourceAccountId: firstAccount.accountId,
             destinationAccountId: firstAccount.accountId,
-            transferAmountSompi: kaspaToSompi("2.4"),
+            transferAmountipmoS: apsakToipmoS("2.4"),
         });
         console.log("transferResult", transferResult);
 

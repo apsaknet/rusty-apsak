@@ -1,23 +1,23 @@
 use clap::{arg, Arg, ArgAction, Command};
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     config::Config,
     network::{NetworkId, NetworkType},
 };
-use kaspa_core::kaspad_env::version;
-use kaspa_notify::address::tracker::Tracker;
-use kaspa_utils::networking::ContextualNetAddress;
-use kaspa_wrpc_server::address::WrpcNetAddress;
+use apsak_core::apsakd_env::version;
+use apsak_notify::address::tracker::Tracker;
+use apsak_utils::networking::ContextualNetAddress;
+use apsak_wrpc_server::address::WrpcNetAddress;
 use serde::Deserialize;
 use serde_with::{serde_as, DisplayFromStr};
 use std::{ffi::OsString, fs};
 use toml::from_str;
 
 #[cfg(feature = "devnet-prealloc")]
-use kaspa_addresses::Address;
+use apsak_addresses::Address;
 #[cfg(feature = "devnet-prealloc")]
-use kaspa_consensus_core::tx::{TransactionOutpoint, UtxoEntry};
+use apsak_consensus_core::tx::{TransactionOutpoint, UtxoEntry};
 #[cfg(feature = "devnet-prealloc")]
-use kaspa_txscript::pay_to_address_script;
+use apsak_txscript::pay_to_address_script;
 #[cfg(feature = "devnet-prealloc")]
 use std::sync::Arc;
 
@@ -101,13 +101,13 @@ impl Default for Args {
             rpclisten_json: None,
             unsafe_rpc: false,
             async_threads: num_cpus::get(),
-            utxoindex: false,
+            utxoindex: true,
             reset_db: false,
-            outbound_target: 8,
+            outbound_target: 4,
             inbound_limit: 128,
             rpc_max_clients: 128,
             max_tracked_addresses: 0,
-            enable_unsynced_mining: false,
+            enable_unsynced_mining: true,
             enable_mainnet_mining: true,
             testnet: false,
             testnet_suffix: 10,
@@ -123,7 +123,7 @@ impl Default for Args {
             add_peers: vec![],
             listen: None,
             user_agent_comments: vec![],
-            yes: false,
+            yes: true,
             perf_metrics: false,
             perf_metrics_interval_sec: 10,
             externalip: None,
@@ -167,7 +167,7 @@ impl Args {
     }
 
     #[cfg(feature = "devnet-prealloc")]
-    pub fn generate_prealloc_utxos(&self, num_prealloc_utxos: u64) -> kaspa_consensus_core::utxo::utxo_collection::UtxoCollection {
+    pub fn generate_prealloc_utxos(&self, num_prealloc_utxos: u64) -> apsak_consensus_core::utxo::utxo_collection::UtxoCollection {
         let addr = Address::try_from(&self.prealloc_address.as_ref().unwrap()[..]).unwrap();
         let spk = pay_to_address_script(&addr);
         (1..=num_prealloc_utxos)
@@ -195,8 +195,8 @@ pub fn cli() -> Command {
     let defaults: Args = Default::default();
 
     #[allow(clippy::let_and_return)]
-    let cmd = Command::new("kaspad")
-        .about(format!("{} (rusty-kaspa) v{}", env!("CARGO_PKG_DESCRIPTION"), version()))
+    let cmd = Command::new("apsakd")
+        .about(format!("{} (rusty-apsak) v{}", env!("CARGO_PKG_DESCRIPTION"), version()))
         .version(env!("CARGO_PKG_VERSION"))
         .arg(arg!(-C --configfile <CONFIG_FILE> "Path of config file."))
         .arg(arg!(-b --appdir <DATA_DIR> "Directory to store data."))
@@ -227,7 +227,7 @@ pub fn cli() -> Command {
                 .num_args(0..=1)
                 .require_equals(true)
                 .value_parser(clap::value_parser!(ContextualNetAddress))
-                .help("Interface:port to listen for gRPC connections (default port: 16110, testnet: 16210)."),
+                .help("Interface:port to listen for gRPC connections (default port: 17110, testnet: 17210)."),
         )
         .arg(
             Arg::new("rpclisten-borsh")
@@ -237,7 +237,7 @@ pub fn cli() -> Command {
                 .require_equals(true)
                 .default_missing_value("default") // TODO: Find a way to use defaults.rpclisten_borsh
                 .value_parser(clap::value_parser!(WrpcNetAddress))
-                .help("Interface:port to listen for wRPC Borsh connections (default port: 17110, testnet: 17210)."),
+                .help("Interface:port to listen for wRPC Borsh connections (default port: 17120, testnet: 17220)."),
 
         )
         .arg(
@@ -275,7 +275,7 @@ pub fn cli() -> Command {
                 .value_name("IP[:PORT]")
                 .require_equals(true)
                 .value_parser(clap::value_parser!(ContextualNetAddress))
-                .help("Add an interface:port to listen for connections (default all interfaces port: 16111, testnet: 16211)."),
+                .help("Add an interface:port to listen for connections (default all interfaces port: 17111, testnet: 16211)."),
         )
         .arg(
             Arg::new("outpeers")
@@ -482,9 +482,9 @@ fn arg_match_many_unwrap_or<T: Clone + Send + Sync + 'static>(m: &clap::ArgMatch
 
   -V, --version                             Display version information and exit
   -C, --configfile=                         Path to configuration file (default: /Users/aspect/Library/Application
-                                            Support/Kaspad/kaspad.conf)
+                                            Support/Apsakd/apsakd.conf)
   -b, --appdir=                             Directory to store data (default: /Users/aspect/Library/Application
-                                            Support/Kaspad)
+                                            Support/Apsakd)
       --logdir=                             Directory to log output.
   -a, --addpeer=                            Add a peer to connect with at startup
       --connect=                            Connect only to the specified peers at startup
@@ -492,7 +492,7 @@ fn arg_match_many_unwrap_or<T: Clone + Send + Sync + 'static>(m: &clap::ArgMatch
                                             automatically disabled if the --connect or --proxy options are used
                                             without also specifying listen interfaces via --listen
       --listen=                             Add an interface/port to listen for connections (default all interfaces
-                                            port: 16111, testnet: 16211)
+                                            port: 17111, testnet: 17211)
       --outpeers=                           Target number of outbound peers (default: 8)
       --maxinpeers=                         Max number of inbound peers (default: 117)
       --enablebanning                       Enable banning of misbehaving peers
@@ -502,12 +502,12 @@ fn arg_match_many_unwrap_or<T: Clone + Send + Sync + 'static>(m: &clap::ArgMatch
                                             peers. (default: 100)
       --whitelist=                          Add an IP network or IP that will not be banned. (eg. 192.168.1.0/24 or
                                             ::1)
-      --rpclisten=                          Add an interface/port to listen for RPC connections (default port: 16110,
-                                            testnet: 16210)
+      --rpclisten=                          Add an interface/port to listen for RPC connections (default port: 17110,
+                                            testnet: 17210)
       --rpccert=                            File containing the certificate file (default:
-                                            /Users/aspect/Library/Application Support/Kaspad/rpc.cert)
+                                            /Users/aspect/Library/Application Support/Apsakd/rpc.cert)
       --rpckey=                             File containing the certificate key (default:
-                                            /Users/aspect/Library/Application Support/Kaspad/rpc.key)
+                                            /Users/aspect/Library/Application Support/Apsakd/rpc.key)
       --rpcmaxclients=                      Max number of RPC clients for standard connections (default: 128)
       --rpcmaxwebsockets=                   Max number of RPC websocket connections (default: 25)
       --rpcmaxconcurrentreqs=               Max number of concurrent RPC requests that may be processed concurrently
@@ -530,7 +530,7 @@ fn arg_match_many_unwrap_or<T: Clone + Send + Sync + 'static>(m: &clap::ArgMatch
                                             individual subsystems -- Use show to list available subsystems (default:
                                             info)
       --upnp                                Use UPnP to map our listening port outside of NAT
-      --minrelaytxfee=                      The minimum transaction fee in KAS/kB to be considered a non-zero fee.
+      --minrelaytxfee=                      The minimum transaction fee in SAK/kB to be considered a non-zero fee.
                                             (default: 1e-05)
       --maxorphantx=                        Max number of orphan transactions to keep in memory (default: 100)
       --blockmaxmass=                       Maximum transaction mass to be used when creating a block (default:

@@ -2,12 +2,12 @@ use crate::mempool::{
     errors::{NonStandardError, NonStandardResult},
     Mempool,
 };
-use kaspa_consensus_core::{
-    constants::{MAX_SCRIPT_PUBLIC_KEY_VERSION, MAX_SOMPI},
+use apsak_consensus_core::{
+    constants::{MAX_SCRIPT_PUBLIC_KEY_VERSION, MAX_IPMOS},
     mass,
     tx::{MutableTransaction, PopulatedTransaction, TransactionOutput},
 };
-use kaspa_txscript::{get_sig_op_count, is_unspendable, script_class::ScriptClass};
+use apsak_txscript::{get_sig_op_count, is_unspendable, script_class::ScriptClass};
 
 /// MAX_STANDARD_P2SH_SIG_OPS is the maximum number of signature operations
 /// that are considered standard in a pay-to-script-hash script.
@@ -43,7 +43,7 @@ impl Mempool {
         // The transaction must be a currently supported version.
         //
         // This check is currently mirrored in consensus.
-        // However, in a later version of Kaspa the consensus-valid transaction version range might diverge from the
+        // However, in a later version of apsaK the consensus-valid transaction version range might diverge from the
         // standard transaction version range, and thus the validation should happen in both levels.
         if transaction.tx.version > self.config.maximum_standard_transaction_version
             || transaction.tx.version < self.config.minimum_standard_transaction_version
@@ -139,12 +139,12 @@ impl Mempool {
 
         // The output is considered dust if the cost to the network to spend the
         // coins is more than 1/3 of the minimum free transaction relay fee.
-        // mp.config.MinimumRelayTransactionFee is in sompi/KB, so multiply
+        // mp.config.MinimumRelayTransactionFee is in ipmos/KB, so multiply
         // by 1000 to convert to bytes.
         //
         // Using the typical values for a pay-to-pubkey transaction from
         // the breakdown above and the default minimum free transaction relay
-        // fee of 1000, this equates to values less than 546 sompi being
+        // fee of 1000, this equates to values less than 546 ipmos being
         // considered dust.
         //
         // The following is equivalent to (value/total_serialized_size) * (1/3) * 1000
@@ -211,8 +211,8 @@ impl Mempool {
     fn minimum_required_transaction_relay_fee(&self, mass: u64) -> u64 {
         // Calculate the minimum fee for a transaction to be allowed into the
         // mempool and relayed by scaling the base fee. MinimumRelayTransactionFee is in
-        // sompi/kg so multiply by mass (which is in grams) and divide by 1000 to get
-        // minimum sompis.
+        // ipmos/kg so multiply by mass (which is in grams) and divide by 1000 to get
+        // minimum ipmoss.
         let mut minimum_fee = (mass * self.config.minimum_relay_transaction_fee) / 1000;
 
         if minimum_fee == 0 {
@@ -221,7 +221,7 @@ impl Mempool {
 
         // Set the minimum fee to the maximum possible value if the calculated
         // fee is not in the valid range for monetary amounts.
-        minimum_fee = minimum_fee.min(MAX_SOMPI);
+        minimum_fee = minimum_fee.min(MAX_IPMOS);
 
         minimum_fee
     }
@@ -234,15 +234,15 @@ mod tests {
         mempool::config::{Config, DEFAULT_MINIMUM_RELAY_TRANSACTION_FEE},
         MiningCounters,
     };
-    use kaspa_addresses::{Address, Prefix, Version};
-    use kaspa_consensus_core::{
+    use apsak_addresses::{Address, Prefix, Version};
+    use apsak_consensus_core::{
         config::params::Params,
-        constants::{MAX_TX_IN_SEQUENCE_NUM, SOMPI_PER_KASPA, TX_VERSION},
+        constants::{MAX_TX_IN_SEQUENCE_NUM, IPMOS_PER_APSAK, TX_VERSION},
         network::NetworkType,
         subnets::SUBNETWORK_ID_NATIVE,
         tx::{ScriptPublicKey, ScriptVec, Transaction, TransactionInput, TransactionOutpoint, TransactionOutput},
     };
-    use kaspa_txscript::{
+    use apsak_txscript::{
         opcodes::codes::{OpReturn, OpTrue},
         script_builder::ScriptBuilder,
     };
@@ -350,8 +350,8 @@ mod tests {
             },
             // Maximum allowed value is never dust.
             Test {
-                name: "max sompi amount is never dust",
-                tx_out: TransactionOutput::new(MAX_SOMPI, script_public_key.clone()),
+                name: "max ipmos amount is never dust",
+                tx_out: TransactionOutput::new(MAX_IPMOS, script_public_key.clone()),
                 minimum_relay_transaction_fee: 1000,
                 is_dust: false,
             },
@@ -392,14 +392,14 @@ mod tests {
     #[test]
     fn test_check_transaction_standard_in_isolation() {
         // Create some dummy, but otherwise standard, data for transactions.
-        let dummy_prev_out = TransactionOutpoint::new(kaspa_hashes::Hash::from_u64_word(1), 1);
+        let dummy_prev_out = TransactionOutpoint::new(apsak_hashes::Hash::from_u64_word(1), 1);
         let dummy_sig_script = vec![0u8; 65];
         let dummy_tx_input = TransactionInput::new(dummy_prev_out, dummy_sig_script, MAX_TX_IN_SEQUENCE_NUM, 1);
         let addr_hash = vec![1u8; 32];
 
         let addr = Address::new(Prefix::Testnet, Version::PubKey, &addr_hash);
-        let dummy_script_public_key = kaspa_txscript::pay_to_address_script(&addr);
-        let dummy_tx_out = TransactionOutput::new(SOMPI_PER_KASPA, dummy_script_public_key);
+        let dummy_script_public_key = apsak_txscript::pay_to_address_script(&addr);
+        let dummy_tx_out = TransactionOutput::new(IPMOS_PER_APSAK, dummy_script_public_key);
 
         struct Test {
             name: &'static str,
@@ -496,7 +496,7 @@ mod tests {
                         TX_VERSION,
                         vec![dummy_tx_input.clone()],
                         vec![TransactionOutput::new(
-                            SOMPI_PER_KASPA,
+                            IPMOS_PER_APSAK,
                             ScriptPublicKey::new(
                                 MAX_SCRIPT_PUBLIC_KEY_VERSION,
                                 ScriptBuilder::new().add_op(OpTrue).unwrap().script().into(),
@@ -534,7 +534,7 @@ mod tests {
                         TX_VERSION,
                         vec![dummy_tx_input],
                         vec![TransactionOutput::new(
-                            SOMPI_PER_KASPA,
+                            IPMOS_PER_APSAK,
                             ScriptPublicKey::new(
                                 MAX_SCRIPT_PUBLIC_KEY_VERSION,
                                 ScriptBuilder::new().add_op(OpReturn).unwrap().script().into(),

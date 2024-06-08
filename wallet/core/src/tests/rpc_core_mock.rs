@@ -2,15 +2,15 @@ use crate::imports::*;
 
 use async_channel::{unbounded, Receiver};
 use async_trait::async_trait;
-use kaspa_notify::events::EVENT_TYPE_ARRAY;
-use kaspa_notify::listener::{ListenerId, ListenerLifespan};
-use kaspa_notify::notifier::{Notifier, Notify};
-use kaspa_notify::scope::Scope;
-use kaspa_notify::subscription::context::SubscriptionContext;
-use kaspa_notify::subscription::{MutationPolicies, UtxosChangedMutationPolicy};
-use kaspa_rpc_core::api::ctl::RpcCtl;
-use kaspa_rpc_core::{api::rpc::RpcApi, *};
-use kaspa_rpc_core::{notify::connection::ChannelConnection, RpcResult};
+use apsak_notify::events::EVENT_TYPE_ARRAY;
+use apsak_notify::listener::{ListenerId, ListenerLifespan};
+use apsak_notify::notifier::{Notifier, Notify};
+use apsak_notify::scope::Scope;
+use apsak_notify::subscription::context::SubscriptionContext;
+use apsak_notify::subscription::{MutationPolicies, UtxosChangedMutationPolicy};
+use apsak_rpc_core::api::ctl::RpcCtl;
+use apsak_rpc_core::{api::rpc::RpcApi, *};
+use apsak_rpc_core::{notify::connection::ChannelConnection, RpcResult};
 use std::sync::Arc;
 
 pub type RpcCoreNotifier = Notifier<Notification, ChannelConnection>;
@@ -49,7 +49,7 @@ impl RpcCoreMock {
     }
 
     #[allow(dead_code)]
-    pub fn notify_new_block_template(&self) -> kaspa_notify::error::Result<()> {
+    pub fn notify_new_block_template(&self) -> apsak_notify::error::Result<()> {
         let notification = Notification::NewBlockTemplate(NewBlockTemplateNotification {});
         self.core_notifier.notify(notification)
     }

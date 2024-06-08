@@ -1,5 +1,5 @@
 [package]
-name = "kaspa-testing-integration"
+name = "apsak-testing-integration"
 publish = false
 rust-version.workspace = true
 version.workspace = true
@@ -10,33 +10,33 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-kaspa-alloc.workspace = true            # This changes the global allocator for all of the next dependencies so should be kept first
+apsak-alloc.workspace = true            # This changes the global allocator for all of the next dependencies so should be kept first
 
-kaspa-addresses.workspace = true
-kaspa-bip32.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensus-notify.workspace = true
-kaspa-consensus.workspace = true
-kaspa-consensusmanager.workspace = true
-kaspa-core.workspace = true
-kaspa-database.workspace = true
-kaspa-grpc-client.workspace = true
-kaspa-grpc-core.workspace = true
-kaspa-grpc-server.workspace = true
-kaspa-hashes.workspace = true
-kaspa-index-processor.workspace = true
-kaspa-math.workspace = true
-kaspa-merkle.workspace = true
-kaspa-muhash.workspace = true
-kaspa-notify.workspace = true
-kaspa-pow.workspace = true
-kaspa-rpc-core.workspace = true
-kaspa-rpc-service.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
-kaspa-utxoindex.workspace = true
-kaspa-wrpc-server.workspace = true
-kaspad.workspace = true
+apsak-addresses.workspace = true
+apsak-bip32.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensus-notify.workspace = true
+apsak-consensus.workspace = true
+apsak-consensusmanager.workspace = true
+apsak-core.workspace = true
+apsak-database.workspace = true
+apsak-grpc-client.workspace = true
+apsak-grpc-core.workspace = true
+apsak-grpc-server.workspace = true
+apsak-hashes.workspace = true
+apsak-index-processor.workspace = true
+apsak-math.workspace = true
+apsak-merkle.workspace = true
+apsak-muhash.workspace = true
+apsak-notify.workspace = true
+apsak-pow.workspace = true
+apsak-rpc-core.workspace = true
+apsak-rpc-service.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
+apsak-utxoindex.workspace = true
+apsak-wrpc-server.workspace = true
+apsakd.workspace = true
 
 async-channel.workspace = true
 async-trait.workspace = true
@@ -69,9 +69,9 @@ workflow-perf-monitor.workspace = true
 criterion.workspace = true
 rand = { workspace = true, features = ["small_rng"] }
 tokio = { workspace = true, features = ["rt", "macros", "process"] }
-kaspa-txscript-errors.workspace = true
+apsak-txscript-errors.workspace = true
 
 [features]
 heap = ["dhat"]
 html_reports = []
-devnet-prealloc = ["kaspad/devnet-prealloc"]
+devnet-prealloc = ["apsakd/devnet-prealloc"]

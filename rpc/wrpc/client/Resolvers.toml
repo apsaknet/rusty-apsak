@@ -1,11 +1,15 @@
 [[resolver]]
-url = "https://beacon.kaspa-ng.org"
-enable = true
-
-[[resolver]]
-url = "https://beacon.kaspa-ng.io"
-enable = true
-
-[[resolver]]
-url = "http://127.0.0.1:8888"
+url = "https://ng1.apsak.org"
 enable = false
+
+[[resolver]]
+url = "https://ng2.apsak.org"
+enable = false
+
+[[resolver]]
+url = "https://ng3.apsak.org"
+enable = false
+
+[[resolver]]
+url = "https://ng4.apsak.org"
+enable = true

@@ -11,7 +11,7 @@ use js_sys::Array;
 use serde_wasm_bindgen::from_value;
 use workflow_wasm::serde::to_value;
 
-use kaspa_wallet_macros::declare_typescript_wasm_interface as declare;
+use apsak_wallet_macros::declare_typescript_wasm_interface as declare;
 
 macro_rules! try_from {
     ($name:ident : $from_type:ty, $to_type:ty, $body:block) => {
@@ -28,7 +28,7 @@ macro_rules! try_from {
 const TS_CATEGORY_WALLET: &'static str = r#"
 /**
  * @categoryDescription Wallet API
- * Wallet API for interfacing with Rusty Kaspa Wallet implementation.
+ * Wallet API for interfacing with Rusty apsaK Wallet implementation.
  */
 "#;
 
@@ -369,7 +369,7 @@ declare! {
      * 
      * If filename is not supplied, the filename will be derived from the wallet title.
      * If both wallet title and filename are not supplied, the wallet will be create
-     * with the default filename `kaspa`.
+     * with the default filename `apsak`.
      * 
      * @category Wallet API
      */
@@ -1364,7 +1364,7 @@ declare! {
         /**
          * Priority fee.
          */
-        priorityFeeSompi? : IFees | bigint;
+        priorityFeeipmoS? : IFees | bigint;
         /**
          * 
          */
@@ -1381,14 +1381,14 @@ try_from! ( args: IAccountsSendRequest, AccountsSendRequest, {
     let account_id = args.get_account_id("accountId")?;
     let wallet_secret = args.get_secret("walletSecret")?;
     let payment_secret = args.try_get_secret("paymentSecret")?;
-    let priority_fee_sompi = args.get::<IFees>("priorityFeeSompi")?.try_into()?;
+    let priority_fee_ipmos = args.get::<IFees>("priorityFeeipmoS")?.try_into()?;
     let payload = args.try_get_value("payload")?.map(|v| v.try_as_vec_u8()).transpose()?;
 
     let outputs = args.get_value("destination")?;
     let destination: PaymentDestination =
         if outputs.is_undefined() { PaymentDestination::Change } else { PaymentOutputs::try_owned_from(outputs)?.into() };
 
-    Ok(AccountsSendRequest { account_id, wallet_secret, payment_secret, priority_fee_sompi, destination, payload })
+    Ok(AccountsSendRequest { account_id, wallet_secret, payment_secret, priority_fee_ipmos, destination, payload })
 });
 
 declare! {
@@ -1435,8 +1435,8 @@ declare! {
         destinationAccountId : HexString;
         walletSecret : string;
         paymentSecret? : string;
-        priorityFeeSompi? : IFees | bigint;
-        transferAmountSompi : bigint;
+        priorityFeeipmoS? : IFees | bigint;
+        transferAmountipmoS : bigint;
     }
     "#,
 }
@@ -1446,16 +1446,16 @@ try_from! ( args: IAccountsTransferRequest, AccountsTransferRequest, {
     let destination_account_id = args.get_account_id("destinationAccountId")?;
     let wallet_secret = args.get_secret("walletSecret")?;
     let payment_secret = args.try_get_secret("paymentSecret")?;
-    let priority_fee_sompi = args.try_get::<IFees>("priorityFeeSompi")?.map(Fees::try_from).transpose()?;
-    let transfer_amount_sompi = args.get_u64("transferAmountSompi")?;
+    let priority_fee_ipmos = args.try_get::<IFees>("priorityFeeipmoS")?.map(Fees::try_from).transpose()?;
+    let transfer_amount_ipmos = args.get_u64("transferAmountipmoS")?;
 
     Ok(AccountsTransferRequest {
         source_account_id,
         destination_account_id,
         wallet_secret,
         payment_secret,
-        priority_fee_sompi,
-        transfer_amount_sompi,
+        priority_fee_ipmos,
+        transfer_amount_ipmos,
     })
 });
 
@@ -1494,7 +1494,7 @@ declare! {
     export interface IAccountsEstimateRequest {
         accountId : HexString;
         destination : IPaymentOutput[];
-        priorityFeeSompi : IFees | bigint;
+        priorityFeeipmoS : IFees | bigint;
         payload? : Uint8Array | string;
     }
     "#,
@@ -1502,14 +1502,14 @@ declare! {
 
 try_from! ( args: IAccountsEstimateRequest, AccountsEstimateRequest, {
     let account_id = args.get_account_id("accountId")?;
-    let priority_fee_sompi = args.get::<IFees>("priorityFeeSompi")?.try_into()?;
+    let priority_fee_ipmos = args.get::<IFees>("priorityFeeipmoS")?.try_into()?;
     let payload = args.try_get_value("payload")?.map(|v| v.try_as_vec_u8()).transpose()?;
 
     let outputs = args.get_value("destination")?;
     let destination: PaymentDestination =
         if outputs.is_undefined() { PaymentDestination::Change } else { PaymentOutputs::try_owned_from(outputs)?.into() };
 
-    Ok(AccountsEstimateRequest { account_id, priority_fee_sompi, destination, payload })
+    Ok(AccountsEstimateRequest { account_id, priority_fee_ipmos, destination, payload })
 });
 
 declare! {

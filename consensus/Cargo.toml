@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-consensus"
-description = "Kaspa consensus library"
+name = "apsak-consensus"
+description = "apsaK consensus library"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -18,19 +18,19 @@ faster-hex.workspace = true
 futures-util.workspace = true
 indexmap.workspace = true
 itertools.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensus-notify.workspace = true
-kaspa-consensusmanager.workspace = true
-kaspa-core.workspace = true
-kaspa-database.workspace = true
-kaspa-hashes.workspace = true
-kaspa-math.workspace = true
-kaspa-merkle.workspace = true
-kaspa-muhash.workspace = true
-kaspa-notify.workspace = true
-kaspa-pow.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensus-notify.workspace = true
+apsak-consensusmanager.workspace = true
+apsak-core.workspace = true
+apsak-database.workspace = true
+apsak-hashes.workspace = true
+apsak-math.workspace = true
+apsak-merkle.workspace = true
+apsak-muhash.workspace = true
+apsak-notify.workspace = true
+apsak-pow.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
 log.workspace = true
 once_cell.workspace = true
 parking_lot.workspace = true
@@ -52,7 +52,7 @@ criterion.workspace = true
 serde_json.workspace = true
 flate2.workspace = true
 rand_distr.workspace = true
-kaspa-txscript-errors.workspace = true
+apsak-txscript-errors.workspace = true
 
 [[bench]]
 name = "hash_benchmarks"
@@ -60,4 +60,4 @@ harness = false
 
 [features]
 html_reports = []
-devnet-prealloc = ["kaspa-consensus-core/devnet-prealloc"]
+devnet-prealloc = ["apsak-consensus-core/devnet-prealloc"]

@@ -1,5 +1,5 @@
 use borsh::{BorshDeserialize, BorshSerialize};
-use kaspa_addresses::Prefix;
+use apsak_addresses::Prefix;
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt::{Debug, Display, Formatter};
 use std::ops::Deref;
@@ -28,16 +28,16 @@ pub enum NetworkType {
 impl NetworkType {
     pub fn default_rpc_port(&self) -> u16 {
         match self {
-            NetworkType::Mainnet => 16110,
-            NetworkType::Testnet => 16210,
-            NetworkType::Simnet => 16510,
-            NetworkType::Devnet => 16610,
+            NetworkType::Mainnet => 17110,
+            NetworkType::Testnet => 17210,
+            NetworkType::Simnet => 17510,
+            NetworkType::Devnet => 17610,
         }
     }
 
     pub fn default_borsh_rpc_port(&self) -> u16 {
         match self {
-            NetworkType::Mainnet => 17110,
+            NetworkType::Mainnet => 17120,
             NetworkType::Testnet => 17210,
             NetworkType::Simnet => 17510,
             NetworkType::Devnet => 17610,
@@ -143,7 +143,7 @@ impl TryFrom<&NetworkTypeT> for Prefix {
 
 #[derive(thiserror::Error, Debug, Clone)]
 pub enum NetworkIdError {
-    #[error("Invalid network name prefix: {0}. The expected prefix is 'kaspa'.")]
+    #[error("Invalid network name prefix: {0}. The expected prefix is 'apsak'.")]
     InvalidPrefix(String),
 
     #[error(transparent)]
@@ -175,7 +175,7 @@ impl From<NetworkIdError> for JsValue {
 }
 
 ///
-/// NetworkId is a unique identifier for a kaspa network instance.
+/// NetworkId is a unique identifier for a apsak network instance.
 /// It is composed of a network type and an optional suffix.
 ///
 /// @category Consensus
@@ -228,14 +228,14 @@ impl NetworkId {
         // this reasoning so we keep it on the same port in order to simplify RPC client management (hence [`default_rpc_port`]
         // is defined on the [`NetworkType`] struct
         match self.network_type {
-            NetworkType::Mainnet => 16111,
+            NetworkType::Mainnet => 17111,
             NetworkType::Testnet => match self.suffix {
-                Some(10) => 16211,
-                Some(11) => 16311,
-                None | Some(_) => 16411,
+                Some(10) => 17211,
+                Some(11) => 17311,
+                None | Some(_) => 17411,
             },
-            NetworkType::Simnet => 16511,
-            NetworkType::Devnet => 16611,
+            NetworkType::Simnet => 17511,
+            NetworkType::Devnet => 17611,
         }
     }
 
@@ -250,13 +250,13 @@ impl NetworkId {
         NETWORK_IDS.iter().copied()
     }
 
-    /// Returns a textual description of the network prefixed with `kaspa-`
+    /// Returns a textual description of the network prefixed with `apsak-`
     pub fn to_prefixed(&self) -> String {
-        format!("kaspa-{}", self)
+        format!("apsak-{}", self)
     }
 
     pub fn from_prefixed(prefixed: &str) -> Result<Self, NetworkIdError> {
-        if let Some(stripped) = prefixed.strip_prefix("kaspa-") {
+        if let Some(stripped) = prefixed.strip_prefix("apsak-") {
             Self::from_str(stripped)
         } else {
             Err(NetworkIdError::InvalidPrefix(prefixed.to_string()))

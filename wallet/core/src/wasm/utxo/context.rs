@@ -4,10 +4,10 @@ use crate::utxo as native;
 use crate::utxo::{UtxoContextBinding, UtxoContextId};
 use crate::wasm::utxo::UtxoProcessor;
 use crate::wasm::{Balance, BalanceStrings};
-use kaspa_addresses::AddressOrStringArrayT;
-use kaspa_consensus_client::UtxoEntryReferenceArrayT;
-use kaspa_hashes::Hash;
-use kaspa_wallet_macros::declare_typescript_wasm_interface as declare;
+use apsak_addresses::AddressOrStringArrayT;
+use apsak_consensus_client::UtxoEntryReferenceArrayT;
+use apsak_hashes::Hash;
+use apsak_wallet_macros::declare_typescript_wasm_interface as declare;
 
 declare! {
     IUtxoContextArgs,
@@ -38,7 +38,7 @@ declare! {
 
 ///
 /// UtxoContext is a class that provides a way to track addresses activity
-/// on the Kaspa network.  When an address is registered with UtxoContext
+/// on the apsaK network.  When an address is registered with UtxoContext
 /// it aggregates all UTXO entries for that address and emits events when
 /// any activity against these addresses occurs.
 ///

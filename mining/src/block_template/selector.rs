@@ -1,4 +1,4 @@
-use kaspa_core::{time::Stopwatch, trace};
+use apsak_core::{time::Stopwatch, trace};
 use rand::Rng;
 use std::collections::HashMap;
 
@@ -8,7 +8,7 @@ use super::{
     model::tx::{CandidateList, SelectableTransaction, SelectableTransactions, TransactionIndex},
     policy::Policy,
 };
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     block::TemplateTransactionSelector,
     subnets::SubnetworkId,
     tx::{Transaction, TransactionId},
@@ -264,13 +264,13 @@ impl TemplateTransactionSelector for TransactionsSelector {
 mod tests {
     use super::*;
     use itertools::Itertools;
-    use kaspa_consensus_core::{
-        constants::{MAX_TX_IN_SEQUENCE_NUM, SOMPI_PER_KASPA, TX_VERSION},
+    use apsak_consensus_core::{
+        constants::{MAX_TX_IN_SEQUENCE_NUM, IPMOS_PER_APSAK, TX_VERSION},
         mass::transaction_estimated_serialized_size,
         subnets::SUBNETWORK_ID_NATIVE,
         tx::{Transaction, TransactionId, TransactionInput, TransactionOutpoint, TransactionOutput},
     };
-    use kaspa_txscript::{pay_to_script_hash_signature_script, test_helpers::op_true_script};
+    use apsak_txscript::{pay_to_script_hash_signature_script, test_helpers::op_true_script};
     use std::{collections::HashSet, sync::Arc};
 
     use crate::{mempool::config::DEFAULT_MINIMUM_RELAY_TRANSACTION_FEE, model::candidate_tx::CandidateTransaction};
@@ -280,7 +280,7 @@ mod tests {
         const TX_INITIAL_COUNT: usize = 1_000;
 
         // Create a vector of transactions differing by output value so they have unique ids
-        let transactions = (0..TX_INITIAL_COUNT).map(|i| create_transaction(SOMPI_PER_KASPA * (i + 1) as u64)).collect_vec();
+        let transactions = (0..TX_INITIAL_COUNT).map(|i| create_transaction(IPMOS_PER_APSAK * (i + 1) as u64)).collect_vec();
         let policy = Policy::new(100_000);
         let mut selector = TransactionsSelector::new(policy, transactions);
         let (mut kept, mut rejected) = (HashSet::new(), HashSet::new());

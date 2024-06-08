@@ -4,10 +4,10 @@ use crate::error::Error;
 use crate::result::Result;
 use crate::tx::{Fees, MassCalculator, PaymentDestination};
 use crate::utxo::UtxoEntryReference;
-use crate::{tx::PaymentOutputs, utils::kaspa_to_sompi};
-use kaspa_addresses::Address;
-use kaspa_consensus_core::network::{NetworkId, NetworkType};
-use kaspa_consensus_core::tx::Transaction;
+use crate::{tx::PaymentOutputs, utils::apsak_to_ipmos};
+use apsak_addresses::Address;
+use apsak_consensus_core::network::{NetworkId, NetworkType};
+use apsak_consensus_core::tx::Transaction;
 use rand::prelude::*;
 use std::cell::RefCell;
 use std::fmt::Debug;
@@ -20,27 +20,27 @@ const DISPLAY_LOGS: bool = true;
 const DISPLAY_EXPECTED: bool = true;
 
 #[derive(Clone, Copy, Debug)]
-pub(crate) struct Sompi(u64);
+pub(crate) struct ipmoS(u64);
 
 #[derive(Clone, Copy)]
-struct Kaspa(f64);
+struct apsaK(f64);
 
-impl Debug for Kaspa {
+impl Debug for apsaK {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let sompi: Sompi = self.into();
-        write!(f, "{}", sompi.0)
+        let ipmos: ipmoS = self.into();
+        write!(f, "{}", ipmos.0)
     }
 }
 
-impl From<Kaspa> for Sompi {
-    fn from(kaspa: Kaspa) -> Self {
-        Sompi(kaspa_to_sompi(kaspa.0))
+impl From<apsaK> for ipmoS {
+    fn from(apsak: apsaK) -> Self {
+        ipmoS(apsak_to_ipmos(apsak.0))
     }
 }
 
-impl From<&Kaspa> for Sompi {
-    fn from(kaspa: &Kaspa) -> Self {
-        Sompi(kaspa_to_sompi(kaspa.0))
+impl From<&apsaK> for ipmoS {
+    fn from(apsak: &apsaK) -> Self {
+        ipmoS(apsak_to_ipmos(apsak.0))
     }
 }
 
@@ -52,22 +52,22 @@ enum FeesExpected {
 }
 
 impl FeesExpected {
-    fn sender<T: Into<Sompi>>(v: T) -> Self {
-        let sompi: Sompi = v.into();
-        FeesExpected::Sender(sompi.0)
+    fn sender<T: Into<ipmoS>>(v: T) -> Self {
+        let ipmos: ipmoS = v.into();
+        FeesExpected::Sender(ipmos.0)
     }
-    fn receiver<T: Into<Sompi>>(v: T) -> Self {
-        let sompi: Sompi = v.into();
-        FeesExpected::Receiver(sompi.0)
+    fn receiver<T: Into<ipmoS>>(v: T) -> Self {
+        let ipmos: ipmoS = v.into();
+        FeesExpected::Receiver(ipmos.0)
     }
 }
 
 trait PendingTransactionExtension {
     #[allow(dead_code)]
     fn tuple(self) -> (PendingTransaction, Transaction);
-    fn expect<SOMPI>(self, expected: &Expected<SOMPI>) -> Self
+    fn expect<IPMOS>(self, expected: &Expected<IPMOS>) -> Self
     where
-        SOMPI: Into<Sompi> + Debug + Copy;
+        IPMOS: Into<ipmoS> + Debug + Copy;
     fn validate(self) -> Self;
     fn accumulate(self, accumulator: &mut Accumulator) -> Self;
 }
@@ -77,9 +77,9 @@ impl PendingTransactionExtension for PendingTransaction {
         let tx = self.transaction();
         (self, tx)
     }
-    fn expect<SOMPI>(self, expected: &Expected<SOMPI>) -> Self
+    fn expect<IPMOS>(self, expected: &Expected<IPMOS>) -> Self
     where
-        SOMPI: Into<Sompi> + Debug + Copy,
+        IPMOS: Into<ipmoS> + Debug + Copy,
     {
         expect(&self, expected);
         self
@@ -113,18 +113,18 @@ impl GeneratorSummaryExtension for GeneratorSummary {
 }
 
 trait FeesExtension {
-    fn sender<T: Into<Sompi>>(v: T) -> Self;
-    fn receiver<T: Into<Sompi>>(v: T) -> Self;
+    fn sender<T: Into<ipmoS>>(v: T) -> Self;
+    fn receiver<T: Into<ipmoS>>(v: T) -> Self;
 }
 
 impl FeesExtension for Fees {
-    fn sender<T: Into<Sompi>>(v: T) -> Self {
-        let sompi: Sompi = v.into();
-        Fees::SenderPays(sompi.0)
+    fn sender<T: Into<ipmoS>>(v: T) -> Self {
+        let ipmos: ipmoS = v.into();
+        Fees::SenderPays(ipmos.0)
     }
-    fn receiver<T: Into<Sompi>>(v: T) -> Self {
-        let sompi: Sompi = v.into();
-        Fees::ReceiverPays(sompi.0)
+    fn receiver<T: Into<ipmoS>>(v: T) -> Self {
+        let ipmos: ipmoS = v.into();
+        Fees::ReceiverPays(ipmos.0)
     }
 }
 
@@ -149,10 +149,10 @@ struct Accumulator {
 }
 
 #[derive(Debug)]
-pub(crate) struct Expected<SOMPI: Into<Sompi>> {
+pub(crate) struct Expected<IPMOS: Into<ipmoS>> {
     is_final: bool,
     input_count: usize,
-    aggregate_input_value: SOMPI,
+    aggregate_input_value: IPMOS,
     output_count: usize,
     priority_fees: FeesExpected,
 }
@@ -180,9 +180,9 @@ fn validate(pt: &PendingTransaction) {
     assert_eq!(pt.inner.mass, calculated_mass, "pending transaction mass does not match calculated mass");
 }
 
-fn expect<SOMPI>(pt: &PendingTransaction, expected: &Expected<SOMPI>)
+fn expect<IPMOS>(pt: &PendingTransaction, expected: &Expected<IPMOS>)
 where
-    SOMPI: Into<Sompi> + Debug + Copy,
+    IPMOS: Into<ipmoS> + Debug + Copy,
 {
     let network_params = pt.generator().network_params();
     let tx = pt.transaction();
@@ -192,7 +192,7 @@ where
     assert_ne!(aggregate_input_value, aggregate_output_value, "aggregate input and output values can not be the same due to fees");
     assert_eq!(pt.is_final(), expected.is_final, "expected final transaction");
 
-    let expected_aggregate_input_value: Sompi = expected.aggregate_input_value.into();
+    let expected_aggregate_input_value: ipmoS = expected.aggregate_input_value.into();
     assert_eq!(tx.inputs.len(), expected.input_count, "expected input count");
     assert_eq!(aggregate_input_value, expected_aggregate_input_value.0, "expected aggregate input value");
     assert_eq!(tx.outputs.len(), expected.output_count, "expected output count");
@@ -298,9 +298,9 @@ impl Harness {
         Rc::new(Harness { generator, accumulator: RefCell::new(Accumulator::default()) })
     }
 
-    pub fn fetch<SOMPI>(self: &Rc<Self>, expected: &Expected<SOMPI>) -> Rc<Self>
+    pub fn fetch<IPMOS>(self: &Rc<Self>, expected: &Expected<IPMOS>) -> Rc<Self>
     where
-        SOMPI: Into<Sompi> + Debug + Copy,
+        IPMOS: Into<ipmoS> + Debug + Copy,
     {
         if DISPLAY_LOGS {
             println!("{}", style(format!("fetch - checking transaction: {}", self.accumulator.borrow().list.len())).magenta());
@@ -313,9 +313,9 @@ impl Harness {
         self.clone()
     }
 
-    pub fn drain<SOMPI>(self: &Rc<Self>, count: usize, expected: &Expected<SOMPI>) -> Rc<Self>
+    pub fn drain<IPMOS>(self: &Rc<Self>, count: usize, expected: &Expected<IPMOS>) -> Rc<Self>
     where
-        SOMPI: Into<Sompi> + Debug + Copy,
+        IPMOS: Into<ipmoS> + Debug + Copy,
     {
         for _n in 0..count {
             if DISPLAY_LOGS {
@@ -360,14 +360,14 @@ impl Harness {
 
 pub(crate) fn generator<T, F>(network_id: NetworkId, head: &[f64], tail: &[f64], fees: Fees, outputs: &[(F, T)]) -> Result<Generator>
 where
-    T: Into<Sompi> + Clone,
+    T: Into<ipmoS> + Clone,
     F: FnOnce(NetworkType) -> Address + Clone,
 {
     let outputs = outputs
         .iter()
         .map(|(address, amount)| {
-            let sompi: Sompi = (*amount).clone().into();
-            (address.clone()(network_id.into()), sompi.0)
+            let ipmos: ipmoS = (*amount).clone().into();
+            (address.clone()(network_id.into()), ipmos.0)
         })
         .collect::<Vec<_>>();
     make_generator(network_id, head, tail, fees, change_address, PaymentOutputs::from(outputs.as_slice()).into())
@@ -387,7 +387,7 @@ where
     let mut values = head.to_vec();
     values.extend(tail);
 
-    let utxo_entries: Vec<UtxoEntryReference> = values.into_iter().map(kaspa_to_sompi).map(UtxoEntryReference::simulated).collect();
+    let utxo_entries: Vec<UtxoEntryReference> = values.into_iter().map(apsak_to_ipmos).map(UtxoEntryReference::simulated).collect();
     let multiplexer = None;
     let sig_op_count = 1;
     let minimum_signatures = 1;
@@ -417,16 +417,16 @@ where
 
 pub(crate) fn change_address(network_type: NetworkType) -> Address {
     match network_type {
-        NetworkType::Mainnet => Address::try_from("kaspa:qpauqsvk7yf9unexwmxsnmg547mhyga37csh0kj53q6xxgl24ydxjsgzthw5j").unwrap(),
-        NetworkType::Testnet => Address::try_from("kaspatest:qqz22l98sf8jun72rwh5rqe2tm8lhwtdxdmynrz4ypwak427qed5juktjt7ju").unwrap(),
+        NetworkType::Mainnet => Address::try_from("apsak:qpauqsvk7yf9unexwmxsnmg547mhyga37csh0kj53q6xxgl24ydxjsgzthw5j").unwrap(),
+        NetworkType::Testnet => Address::try_from("apsaktest:qqz22l98sf8jun72rwh5rqe2tm8lhwtdxdmynrz4ypwak427qed5juktjt7ju").unwrap(),
         _ => unreachable!("network type not supported"),
     }
 }
 
 pub(crate) fn output_address(network_type: NetworkType) -> Address {
     match network_type {
-        NetworkType::Mainnet => Address::try_from("kaspa:qrd9efkvg3pg34sgp6ztwyv3r569qlc43wa5w8nfs302532dzj47knu04aftm").unwrap(),
-        NetworkType::Testnet => Address::try_from("kaspatest:qqrewmx4gpuekvk8grenkvj2hp7xt0c35rxgq383f6gy223c4ud5s58ptm6er").unwrap(),
+        NetworkType::Mainnet => Address::try_from("apsak:qrd9efkvg3pg34sgp6ztwyv3r569qlc43wa5w8nfs302532dzj47knu04aftm").unwrap(),
+        NetworkType::Testnet => Address::try_from("apsaktest:qqrewmx4gpuekvk8grenkvj2hp7xt0c35rxgq383f6gy223c4ud5s58ptm6er").unwrap(),
         _ => unreachable!("network type not supported"),
     }
 }
@@ -456,7 +456,7 @@ fn test_generator_sweep_two_utxos() -> Result<()> {
         .fetch(&Expected {
             is_final: true,
             input_count: 2,
-            aggregate_input_value: Kaspa(20.0),
+            aggregate_input_value: apsaK(20.0),
             output_count: 1,
             priority_fees: FeesExpected::None,
         })
@@ -467,7 +467,7 @@ fn test_generator_sweep_two_utxos() -> Result<()> {
 #[test]
 fn test_generator_sweep_two_utxos_with_priority_fees_rejection() -> Result<()> {
     let generator =
-        make_generator(test_network_id(), &[10.0, 10.0], &[], Fees::sender(Kaspa(5.0)), change_address, PaymentDestination::Change);
+        make_generator(test_network_id(), &[10.0, 10.0], &[], Fees::sender(apsaK(5.0)), change_address, PaymentDestination::Change);
     match generator {
         Err(Error::GeneratorFeesInSweepTransaction) => {}
         _ => panic!("merge 2 UTXOs with fees must fail generator creation"),
@@ -476,8 +476,8 @@ fn test_generator_sweep_two_utxos_with_priority_fees_rejection() -> Result<()> {
 }
 
 #[test]
-fn test_generator_compound_200k_10kas_transactions() -> Result<()> {
-    generator(test_network_id(), &[10.0; 200_000], &[], Fees::sender(Kaspa(5.0)), [(output_address, Kaspa(190_000.0))].as_slice())
+fn test_generator_compound_200k_10sak_transactions() -> Result<()> {
+    generator(test_network_id(), &[10.0; 200_000], &[], Fees::sender(apsaK(5.0)), [(output_address, apsaK(190_000.0))].as_slice())
         .unwrap()
         .harness()
         .validate()
@@ -491,8 +491,8 @@ fn test_generator_compound_100k_random_transactions() -> Result<()> {
     let mut rng = StdRng::seed_from_u64(0);
     let inputs: Vec<f64> = (0..100_000).map(|_| rng.gen_range(0.001..10.0)).collect();
     let total = inputs.iter().sum::<f64>();
-    let outputs = [(output_address, Kaspa(total - 10.0))];
-    generator(test_network_id(), &inputs, &[], Fees::sender(Kaspa(5.0)), outputs.as_slice()).unwrap().harness().validate().finalize();
+    let outputs = [(output_address, apsaK(total - 10.0))];
+    generator(test_network_id(), &inputs, &[], Fees::sender(apsaK(5.0)), outputs.as_slice()).unwrap().harness().validate().finalize();
 
     Ok(())
 }
@@ -502,9 +502,9 @@ fn test_generator_random_outputs() -> Result<()> {
     let mut rng = StdRng::seed_from_u64(0);
     let outputs: Vec<f64> = (0..30).map(|_| rng.gen_range(1.0..10.0)).collect();
     let total = outputs.iter().sum::<f64>();
-    let outputs: Vec<_> = outputs.into_iter().map(|v| (output_address, Kaspa(v))).collect();
+    let outputs: Vec<_> = outputs.into_iter().map(|v| (output_address, apsaK(v))).collect();
 
-    generator(test_network_id(), &[total + 100.0], &[], Fees::sender(Kaspa(5.0)), outputs.as_slice())
+    generator(test_network_id(), &[total + 100.0], &[], Fees::sender(apsaK(5.0)), outputs.as_slice())
         .unwrap()
         .harness()
         .validate()
@@ -519,17 +519,17 @@ fn test_generator_dust_1_1() -> Result<()> {
         test_network_id(),
         &[10.0; 20],
         &[],
-        Fees::sender(Kaspa(5.0)),
-        [(output_address, Kaspa(1.0)), (output_address, Kaspa(1.0))].as_slice(),
+        Fees::sender(apsaK(5.0)),
+        [(output_address, apsaK(1.0)), (output_address, apsaK(1.0))].as_slice(),
     )
     .unwrap()
     .harness()
     .fetch(&Expected {
         is_final: true,
         input_count: 4,
-        aggregate_input_value: Kaspa(40.0),
+        aggregate_input_value: apsaK(40.0),
         output_count: 3,
-        priority_fees: FeesExpected::sender(Kaspa(5.0)),
+        priority_fees: FeesExpected::sender(apsaK(5.0)),
     })
     .finalize();
 
@@ -542,17 +542,17 @@ fn test_generator_inputs_2_outputs_2_fees_exclude() -> Result<()> {
         test_network_id(),
         &[10.0; 2],
         &[],
-        Fees::sender(Kaspa(5.0)),
-        [(output_address, Kaspa(10.0)), (output_address, Kaspa(1.0))].as_slice(),
+        Fees::sender(apsaK(5.0)),
+        [(output_address, apsaK(10.0)), (output_address, apsaK(1.0))].as_slice(),
     )
     .unwrap()
     .harness()
     .fetch(&Expected {
         is_final: true,
         input_count: 2,
-        aggregate_input_value: Kaspa(20.0),
+        aggregate_input_value: apsaK(20.0),
         output_count: 3,
-        priority_fees: FeesExpected::sender(Kaspa(5.0)),
+        priority_fees: FeesExpected::sender(apsaK(5.0)),
     })
     .finalize();
 
@@ -561,31 +561,31 @@ fn test_generator_inputs_2_outputs_2_fees_exclude() -> Result<()> {
 
 #[test]
 fn test_generator_inputs_100_outputs_1_fees_exclude_success() -> Result<()> {
-    // generator(test_network_id(), &[10.0; 100], &[], Fees::sender(Kaspa(5.0)), [(output_address, Kaspa(990.0))].as_slice())
-    generator(test_network_id(), &[10.0; 100], &[], Fees::sender(Kaspa(0.0)), [(output_address, Kaspa(990.0))].as_slice())
+    // generator(test_network_id(), &[10.0; 100], &[], Fees::sender(apsaK(5.0)), [(output_address, apsaK(990.0))].as_slice())
+    generator(test_network_id(), &[10.0; 100], &[], Fees::sender(apsaK(0.0)), [(output_address, apsaK(990.0))].as_slice())
         .unwrap()
         .harness()
         .fetch(&Expected {
             is_final: false,
             input_count: 88,
-            aggregate_input_value: Kaspa(880.0),
+            aggregate_input_value: apsaK(880.0),
             output_count: 1,
             priority_fees: FeesExpected::None,
         })
         .fetch(&Expected {
             is_final: false,
             input_count: 12,
-            aggregate_input_value: Kaspa(120.0),
+            aggregate_input_value: apsaK(120.0),
             output_count: 1,
             priority_fees: FeesExpected::None,
         })
         .fetch(&Expected {
             is_final: true,
             input_count: 2,
-            aggregate_input_value: Sompi(999_99886576),
+            aggregate_input_value: ipmoS(999_99886576),
             output_count: 2,
-            // priority_fees: FeesExpected::sender(Kaspa(5.0)),
-            priority_fees: FeesExpected::sender(Kaspa(0.0)),
+            // priority_fees: FeesExpected::sender(apsaK(5.0)),
+            priority_fees: FeesExpected::sender(apsaK(0.0)),
         })
         .finalize();
 
@@ -598,32 +598,32 @@ fn test_generator_inputs_100_outputs_1_fees_include_success() -> Result<()> {
         test_network_id(),
         &[1.0; 100],
         &[],
-        Fees::receiver(Kaspa(5.0)),
-        // [(output_address, Kaspa(100.0))].as_slice(),
-        [(output_address, Kaspa(100.0))].as_slice(),
+        Fees::receiver(apsaK(5.0)),
+        // [(output_address, apsaK(100.0))].as_slice(),
+        [(output_address, apsaK(100.0))].as_slice(),
     )
     .unwrap()
     .harness()
     .fetch(&Expected {
         is_final: false,
         input_count: 88,
-        aggregate_input_value: Kaspa(88.0),
+        aggregate_input_value: apsaK(88.0),
         output_count: 1,
         priority_fees: FeesExpected::None,
     })
     .fetch(&Expected {
         is_final: false,
         input_count: 12,
-        aggregate_input_value: Kaspa(12.0),
+        aggregate_input_value: apsaK(12.0),
         output_count: 1,
         priority_fees: FeesExpected::None,
     })
     .fetch(&Expected {
         is_final: true,
         input_count: 2,
-        aggregate_input_value: Sompi(99_99886576),
+        aggregate_input_value: ipmoS(99_99886576),
         output_count: 1,
-        priority_fees: FeesExpected::receiver(Kaspa(5.0)),
+        priority_fees: FeesExpected::receiver(apsaK(5.0)),
     })
     .finalize();
 
@@ -632,13 +632,13 @@ fn test_generator_inputs_100_outputs_1_fees_include_success() -> Result<()> {
 
 #[test]
 fn test_generator_inputs_100_outputs_1_fees_exclude_insufficient_funds() -> Result<()> {
-    generator(test_network_id(), &[10.0; 100], &[], Fees::sender(Kaspa(5.0)), [(output_address, Kaspa(1000.0))].as_slice())
+    generator(test_network_id(), &[10.0; 100], &[], Fees::sender(apsaK(5.0)), [(output_address, apsaK(1000.0))].as_slice())
         .unwrap()
         .harness()
         .fetch(&Expected {
             is_final: false,
             input_count: 88,
-            aggregate_input_value: Kaspa(880.0),
+            aggregate_input_value: apsaK(880.0),
             output_count: 1,
             priority_fees: FeesExpected::None,
         })
@@ -649,7 +649,7 @@ fn test_generator_inputs_100_outputs_1_fees_exclude_insufficient_funds() -> Resu
 
 #[test]
 fn test_generator_inputs_903_outputs_2_fees_exclude() -> Result<()> {
-    generator(test_network_id(), &[10.0; 1_000], &[], Fees::sender(Kaspa(5.0)), [(output_address, Kaspa(9_000.0))].as_slice())
+    generator(test_network_id(), &[10.0; 1_000], &[], Fees::sender(apsaK(5.0)), [(output_address, apsaK(9_000.0))].as_slice())
         .unwrap()
         .harness()
         .drain(
@@ -657,7 +657,7 @@ fn test_generator_inputs_903_outputs_2_fees_exclude() -> Result<()> {
             &Expected {
                 is_final: false,
                 input_count: 88,
-                aggregate_input_value: Kaspa(880.0),
+                aggregate_input_value: apsaK(880.0),
                 output_count: 1,
                 priority_fees: FeesExpected::None,
             },
@@ -665,16 +665,16 @@ fn test_generator_inputs_903_outputs_2_fees_exclude() -> Result<()> {
         .fetch(&Expected {
             is_final: false,
             input_count: 21,
-            aggregate_input_value: Kaspa(210.0),
+            aggregate_input_value: apsaK(210.0),
             output_count: 1,
             priority_fees: FeesExpected::None,
         })
         .fetch(&Expected {
             is_final: true,
             input_count: 11,
-            aggregate_input_value: Sompi(9009_98981896),
+            aggregate_input_value: ipmoS(9009_98981896),
             output_count: 2,
-            priority_fees: FeesExpected::receiver(Kaspa(5.0)),
+            priority_fees: FeesExpected::receiver(apsaK(5.0)),
         })
         .finalize();
 

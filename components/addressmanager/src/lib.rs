@@ -13,10 +13,10 @@ use itertools::{
     Either::{Left, Right},
     Itertools,
 };
-use kaspa_consensus_core::config::Config;
-use kaspa_core::{debug, info, task::tick::TickService, time::unix_now, warn};
-use kaspa_database::prelude::{CachePolicy, StoreResultExtensions, DB};
-use kaspa_utils::networking::IpAddress;
+use apsak_consensus_core::config::Config;
+use apsak_core::{debug, info, task::tick::TickService, time::unix_now, warn};
+use apsak_database::prelude::{CachePolicy, StoreResultExtensions, DB};
+use apsak_utils::networking::IpAddress;
 use local_ip_address::list_afinet_netifas;
 use parking_lot::Mutex;
 use stores::banned_address_store::{BannedAddressesStore, BannedAddressesStoreReader, ConnectionBanTimestamp, DbBannedAddressesStore};
@@ -31,7 +31,7 @@ const UPNP_DEADLINE_SEC: u64 = 2 * 60;
 const UPNP_EXTEND_PERIOD: u64 = UPNP_DEADLINE_SEC / 2;
 
 /// The name used as description when registering the UPnP service
-pub(crate) const UPNP_REGISTRATION_NAME: &str = "rusty-kaspa";
+pub(crate) const UPNP_REGISTRATION_NAME: &str = "rusty-apsak";
 
 struct ExtendHelper {
     gateway: Gateway,
@@ -337,8 +337,8 @@ mod address_store_with_cache {
     };
 
     use itertools::Itertools;
-    use kaspa_database::prelude::{CachePolicy, DB};
-    use kaspa_utils::networking::PrefixBucket;
+    use apsak_database::prelude::{CachePolicy, DB};
+    use apsak_utils::networking::PrefixBucket;
     use rand::{
         distributions::{WeightedError, WeightedIndex},
         prelude::Distribution,
@@ -515,11 +515,11 @@ mod address_store_with_cache {
 
         use super::*;
         use address_manager::AddressManager;
-        use kaspa_consensus_core::config::{params::SIMNET_PARAMS, Config};
-        use kaspa_core::task::tick::TickService;
-        use kaspa_database::create_temp_db;
-        use kaspa_database::prelude::ConnBuilder;
-        use kaspa_utils::networking::IpAddress;
+        use apsak_consensus_core::config::{params::SIMNET_PARAMS, Config};
+        use apsak_core::task::tick::TickService;
+        use apsak_database::create_temp_db;
+        use apsak_database::prelude::ConnBuilder;
+        use apsak_utils::networking::IpAddress;
         use statest::ks::KSTest;
         use statrs::distribution::Uniform;
         use std::net::{IpAddr, Ipv6Addr};
@@ -538,7 +538,7 @@ mod address_store_with_cache {
 
         #[test]
         fn test_network_distribution_weighting() {
-            kaspa_core::log::try_init_logger("info");
+            apsak_core::log::try_init_logger("info");
 
             // Variables to initialize ip generation with.
             let largest_bucket: u16 = 2048;
@@ -568,7 +568,7 @@ mod address_store_with_cache {
                             current_ip_bytes[0], current_ip_bytes[1], current_ip_bytes[2], current_ip_bytes[3]
                         ))
                         .unwrap(),
-                        16111,
+                        17111,
                     ));
                     num_of_addresses += 1;
                 }
@@ -614,7 +614,7 @@ mod address_store_with_cache {
             let significance = 0.10;
 
             // Display and assert the result
-            kaspa_core::info!(
+            apsak_core::info!(
                 "Kolmogorov–Smirnov test result for weighted network distribution uniformity: p = {0:.4} (p < {1})",
                 adjusted_p,
                 significance

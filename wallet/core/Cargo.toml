@@ -1,7 +1,7 @@
 [package]
-name = "kaspa-wallet-core"
-description = "Kaspa wallet library"
-keywords = ["kaspa", "wallet"]
+name = "apsak-wallet-core"
+description = "apsaK wallet library"
+keywords = ["apsak", "wallet"]
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -13,14 +13,14 @@ repository.workspace = true
 [features]
 multi-user = []
 wasm32-keygen = [
-    # "kaspa-consensus-wasm/wasm32-types",
+    # "apsak-consensus-wasm/wasm32-types",
 ]
 wasm32-core = [
-    "kaspa-consensus-wasm/wasm32-sdk",
-    "kaspa-consensus-core/wasm32-sdk",
-    "kaspa-wrpc-client/wasm32-sdk",
-    "kaspa-wrpc-wasm/wasm32-sdk",
-    "kaspa-wasm-core/wasm32-sdk",
+    "apsak-consensus-wasm/wasm32-sdk",
+    "apsak-consensus-core/wasm32-sdk",
+    "apsak-wrpc-client/wasm32-sdk",
+    "apsak-wrpc-wasm/wasm32-sdk",
+    "apsak-wasm-core/wasm32-sdk",
 ]
 wasm32-sdk = [
     "wasm32-core"
@@ -56,24 +56,24 @@ heapless.workspace = true
 hmac.workspace = true
 itertools.workspace = true
 js-sys.workspace = true
-kaspa-addresses.workspace = true
-kaspa-bip32.workspace = true
-kaspa-consensus-client.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensus-wasm.workspace = true
-kaspa-core.workspace = true
-kaspa-hashes.workspace = true
-kaspa-metrics-core.workspace = true
-kaspa-notify.workspace = true
-kaspa-rpc-core.workspace = true
-kaspa-txscript-errors.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
-kaspa-wallet-keys.workspace = true
-kaspa-wallet-macros.workspace = true
-kaspa-wasm-core.workspace = true
-kaspa-wrpc-client.workspace = true
-kaspa-wrpc-wasm.workspace = true
+apsak-addresses.workspace = true
+apsak-bip32.workspace = true
+apsak-consensus-client.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensus-wasm.workspace = true
+apsak-core.workspace = true
+apsak-hashes.workspace = true
+apsak-metrics-core.workspace = true
+apsak-notify.workspace = true
+apsak-rpc-core.workspace = true
+apsak-txscript-errors.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
+apsak-wallet-keys.workspace = true
+apsak-wallet-macros.workspace = true
+apsak-wasm-core.workspace = true
+apsak-wrpc-client.workspace = true
+apsak-wrpc-wasm.workspace = true
 md-5.workspace = true
 pad.workspace = true
 pbkdf2.workspace = true

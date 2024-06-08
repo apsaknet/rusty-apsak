@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-rpc-core"
-description = "Kaspa RPC core"
+name = "apsak-rpc-core"
+description = "apsaK RPC core"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -11,25 +11,25 @@ repository.workspace = true
 
 [features]
 wasm32-sdk = [
-    "kaspa-consensus-client/wasm32-sdk",
-    "kaspa-consensus-wasm/wasm32-sdk"
+    "apsak-consensus-client/wasm32-sdk",
+    "apsak-consensus-wasm/wasm32-sdk"
 ]
 
 [dependencies]
-kaspa-addresses.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensus-client.workspace = true
-kaspa-consensus-notify.workspace = true
-kaspa-consensus-wasm.workspace = true
-kaspa-core.workspace = true
-kaspa-hashes.workspace = true
-kaspa-index-core.workspace = true
-kaspa-math.workspace = true
-kaspa-mining-errors.workspace = true
-kaspa-notify.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
-kaspa-rpc-macros.workspace = true
+apsak-addresses.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensus-client.workspace = true
+apsak-consensus-notify.workspace = true
+apsak-consensus-wasm.workspace = true
+apsak-core.workspace = true
+apsak-hashes.workspace = true
+apsak-index-core.workspace = true
+apsak-math.workspace = true
+apsak-mining-errors.workspace = true
+apsak-notify.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
+apsak-rpc-macros.workspace = true
 
 async-channel.workspace = true
 async-trait.workspace = true

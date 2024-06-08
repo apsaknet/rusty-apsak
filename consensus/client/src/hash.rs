@@ -1,8 +1,8 @@
 use crate::imports::*;
 use crate::result::Result;
-use kaspa_hashes as native;
-use kaspa_hashes::HasherBase;
-use kaspa_wasm_core::types::BinaryT;
+use apsak_hashes as native;
+use apsak_hashes::HasherBase;
+use apsak_wasm_core::types::BinaryT;
 
 /// @category Wallet SDK
 #[derive(Default, Clone)]

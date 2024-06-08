@@ -4,9 +4,9 @@ use crate::{
     script_class::ScriptClass,
 };
 use blake2b_simd::Params;
-use kaspa_addresses::{Address, Prefix, Version};
-use kaspa_consensus_core::tx::{ScriptPublicKey, ScriptVec};
-use kaspa_txscript_errors::TxScriptError;
+use apsak_addresses::{Address, Prefix, Version};
+use apsak_consensus_core::tx::{ScriptPublicKey, ScriptVec};
+use apsak_txscript_errors::TxScriptError;
 use smallvec::SmallVec;
 use std::iter::once;
 
@@ -86,7 +86,7 @@ pub fn extract_script_pub_key_address(script_public_key: &ScriptPublicKey, prefi
 pub mod test_helpers {
     use super::*;
     use crate::{opcodes::codes::OpTrue, MAX_TX_IN_SEQUENCE_NUM};
-    use kaspa_consensus_core::{
+    use apsak_consensus_core::{
         constants::TX_VERSION,
         subnets::SUBNETWORK_ID_NATIVE,
         tx::{Transaction, TransactionInput, TransactionOutpoint, TransactionOutput},
@@ -102,7 +102,7 @@ pub mod test_helpers {
 
     // Creates a transaction that spends the first output of provided transaction.
     // Assumes that the output being spent has opTrueScript as it's scriptPublicKey.
-    // Creates the value of the spent output minus provided `fee` (in sompi).
+    // Creates the value of the spent output minus provided `fee` (in ipmos).
     pub fn create_transaction(tx_to_spend: &Transaction, fee: u64) -> Transaction {
         let (script_public_key, redeem_script) = op_true_script();
         let signature_script = pay_to_script_hash_signature_script(redeem_script, vec![]).expect("the script is canonical");
@@ -137,7 +137,7 @@ mod tests {
                     ),
                 ),
                 prefix: Prefix::Mainnet,
-                expected_address: Ok("kaspa:qpauqsvk7yf9unexwmxsnmg547mhyga37csh0kj53q6xxgl24ydxjsgzthw5j".try_into().unwrap()),
+                expected_address: Ok("apsak:qpauqsvk7yf9unexwmxsnmg547mhyga37csh0kj53q6xxgl24ydxjsgzthw5j".try_into().unwrap()),
             },
             Test {
                 name: "Testnet PubKeyECDSA script and address",
@@ -148,7 +148,7 @@ mod tests {
                     ),
                 ),
                 prefix: Prefix::Testnet,
-                expected_address: Ok("kaspatest:qxaqrlzlf6wes72en3568khahq66wf27tuhfxn5nytkd8tcep2c0vrse6gdmpks".try_into().unwrap()),
+                expected_address: Ok("apsaktest:qxaqrlzlf6wes72en3568khahq66wf27tuhfxn5nytkd8tcep2c0vrse6gdmpks".try_into().unwrap()),
             },
             Test {
                 name: "Testnet non standard script",

@@ -1,11 +1,15 @@
 
-<h1>Kaspa On Rust</h1>
+<h1>apsaK On Rust</h1>
 
-Welcome to the Rust-based implementation of the Kaspa full-node and its ancillary libraries. The contained node release serves as a drop-in replacement to the established <a href="https://github.com/kaspanet/kaspad">Golang node</a> and to date is the recommended node software for the Kaspa network, introducing developers to the possibilities of Rust in the Kaspa network's context.
+Welcome to the Rust-based implementation of the apsaK full-node and its ancillary libraries.
 
-We invite developers and blockchain enthusiasts to collaborate, test, and optimize our Rust implementation. Each line of code here is an opportunity to contribute to the open-source blockchain movement, shaping a platform designed for scalability and speed without compromising on decentralization.
+Your feedback, contributions, and issue reports will be integral to evolving this codebase and continuing its maturity as a reliable node in the apsaK network.
 
-Your feedback, contributions, and issue reports will be integral to evolving this codebase and continuing its maturity as a reliable node in the Kaspa network.
+[![apsaK Discord](https://discord.com/api/guilds/1244593448326004736/widget.png?style=banner2)](https://discord.gg/qswCegbz3H)
+
+## What is apsak
+
+apsaK is a playful twist on the proof-of-work cryptocurrency Kaspa. While Kaspa aims for instant confirmations and sub-second block times, apsaK takes a more whimsical approach. Instead of striving for speed and efficiency, apsaK embraces the unpredictable and chaotic nature of meme coins. It’s all about the fun and unpredictability in the world of cryptocurrency. Remember, in the world of apsaK, the less sense it makes, the better!
 
 ## Installation
   <details>
@@ -46,8 +50,8 @@ Your feedback, contributions, and issue reports will be integral to evolving thi
       ```      
   5. Clone the repo
       ```bash
-      git clone https://github.com/kaspanet/rusty-kaspa
-      cd rusty-kaspa
+      git clone https://github.com/apsaknet/rusty-apsak
+      cd rusty-apsak
       ```
   </details>
 
@@ -83,8 +87,8 @@ Your feedback, contributions, and issue reports will be integral to evolving thi
       ```      
   7. Clone the repo
       ```bash
-      git clone https://github.com/kaspanet/rusty-kaspa
-      cd rusty-kaspa
+      git clone https://github.com/apsaknet/rusty-apsak
+      cd rusty-apsak
       ```
  </details>      
 
@@ -143,8 +147,8 @@ To build WASM on MacOS you need to install `llvm` from homebrew (at the time of 
       ```      
   5. Clone the repo
       ```bash
-      git clone https://github.com/kaspanet/rusty-kaspa
-      cd rusty-kaspa
+      git clone https://github.com/apsaknet/rusty-apsak
+      cd rusty-apsak
       ```
 
  </details>   
@@ -172,19 +176,18 @@ To build WASM on MacOS you need to install `llvm` from homebrew (at the time of 
 
 ### Builds & documentation
 
-  - Release builds: https://github.com/kaspanet/rusty-kaspa/releases
-  - Developer builds: https://kaspa.aspectron.org/nightly/downloads/
+  - Release builds: https://github.com/apsaknet/rusty-apsak/releases
   - Developer TypeScript documentation: https://kaspa.aspectron.org/docs/
 
   </details>
 <details>
 
 <summary>
-Kaspa CLI + Wallet
+apsaK CLI + Wallet
 </summary>
-`kaspa-cli` crate provides cli-driven RPC interface to the node and a
-terminal interface to the Rusty Kaspa Wallet runtime. These wallets are
-compatible with WASM SDK Wallet API and Kaspa NG projects.
+`apsak-cli` crate provides cli-driven RPC interface to the node and a
+terminal interface to the Rusty apsaK Wallet runtime. These wallets are
+compatible with WASM SDK Wallet API and apsaK NG projects.
 
 
 ```bash
@@ -222,19 +225,10 @@ The framework is compatible with all major desktop and mobile browsers.
   **Start a mainnet node**
 
   ```bash
-  cargo run --release --bin kaspad
+  cargo run --release --bin apsakd
   # or with UTXO-index enabled (needed when using wallets)
-  cargo run --release --bin kaspad -- --utxoindex
+  cargo run --release --bin apsakd -- --utxoindex
   ```
-  **Start a testnet node**
-
-  ```bash
-cargo run --release --bin kaspad -- --testnet
-  ```
-
-  **Testnet 11**
-  
-  For participation in the 10BPS test network (TN11), see the following detailed [guide](docs/testnet11.md).
 
 <details>
 
@@ -243,9 +237,9 @@ Using a configuration file
   </summary>
 
   ```bash
-cargo run --release --bin kaspad -- --configfile /path/to/configfile.toml
+cargo run --release --bin apsakd -- --configfile /path/to/configfile.toml
 # or
-cargo run --release --bin kaspad -- -C /path/to/configfile.toml
+cargo run --release --bin apsakd -- -C /path/to/configfile.toml
   ```
   - The config file should be a list of \<CLI argument\> = \<value\> separated by newlines. 
   - Whitespace around the `=` is fine, `arg=value` and `arg = value` are both parsed correctly.
@@ -265,7 +259,7 @@ addpeer = ["10.0.0.1", "1.2.3.4"]
  Pass the `--help` flag to view all possible arguments
 
   ```bash
-cargo run --release --bin kaspad -- --help
+cargo run --release --bin apsakd -- --help
   ```
 </details>
 
@@ -275,7 +269,7 @@ cargo run --release --bin kaspad -- --help
 wRPC
   </summary>
 
-  wRPC subsystem is disabled by default in `kaspad` and can be enabled via:
+  wRPC subsystem is disabled by default in `apsakd` and can be enabled via:
 
 
   JSON protocol:
@@ -294,7 +288,7 @@ wRPC
 
   **Sidenote:**
 
-  Rusty Kaspa integrates an optional wRPC
+  Rusty apsaK integrates an optional wRPC
   subsystem. wRPC is a high-performance, platform-neutral, Rust-centric, WebSocket-framed RPC 
   implementation that can use [Borsh](https://borsh.io/) and JSON protocol encoding.
 
@@ -306,10 +300,10 @@ wRPC
   both client and server should be built from the same codebase.  
 
   JSON protocol is based on 
-  Kaspa data structures and is data-structure-version agnostic. You can connect to the
+  apsaK data structures and is data-structure-version agnostic. You can connect to the
   JSON endpoint using any WebSocket library. Built-in RPC clients for JavaScript and
   TypeScript capable of running in web browsers and Node.js are available as a part of
-  the Kaspa WASM framework.
+  the apsaK WASM framework.
 
 </details>
 
@@ -325,7 +319,7 @@ wRPC
 
 <summary>Simulation framework (Simpa)</summary>
 
-Logging in `kaspad` and `simpa` can be [filtered](https://docs.rs/env_logger/0.10.0/env_logger/#filtering-results) by either:
+Logging in `apsakd` and `simpa` can be [filtered](https://docs.rs/env_logger/0.10.0/env_logger/#filtering-results) by either:
 
 The current codebase supports a full in-process network simulation, building an actual DAG over virtual time with virtual delay and benchmarking validation time (following the simulation generation). 
 
@@ -349,10 +343,10 @@ cargo run --release --bin simpa -- -t=200 -d=2 -b=8 -n=1000
 
 <summary>Heap Profiling</summary>
 
-Heap-profiling in `kaspad` and `simpa` can be done by enabling `heap` feature and profile using the `--features` argument
+Heap-profiling in `apsakd` and `simpa` can be done by enabling `heap` feature and profile using the `--features` argument
 
 ```bash
-cargo run --bin kaspad --profile heap --features=heap
+cargo run --bin apsakd --profile heap --features=heap
 ```
 
 It will produce `{bin-name}-heap.json` file in the root of the workdir, that can be inspected by the [dhat-viewer](https://github.com/unofficial-mirror/valgrind/tree/master/dhat)
@@ -368,7 +362,7 @@ It will produce `{bin-name}-heap.json` file in the root of the workdir, that can
 **Run unit and most integration tests**
 
 ```bash
-cd rusty-kaspa
+cd rusty-apsak
 cargo test --release
 // or install nextest and run
 ```
@@ -378,7 +372,7 @@ cargo test --release
 **Using nextest**
 
 ```bash
-cd rusty-kaspa
+cd rusty-apsak
 cargo nextest run --release
 ```
 
@@ -392,7 +386,7 @@ cargo nextest run --release
 <summary>Benchmarks</summary>
 
 ```bash
-cd rusty-kaspa
+cd rusty-apsak
 cargo bench
 ```
 
@@ -402,13 +396,13 @@ cargo bench
 
 <summary>Logging</summary>
 
-Logging in `kaspad` and `simpa` can be [filtered](https://docs.rs/env_logger/0.10.0/env_logger/#filtering-results) by either:
+Logging in `apsakd` and `simpa` can be [filtered](https://docs.rs/env_logger/0.10.0/env_logger/#filtering-results) by either:
 
 1. Defining the environment variable `RUST_LOG`
 2. Adding the --loglevel argument like in the following example:
 
     ```
-    (cargo run --bin kaspad -- --loglevel info,kaspa_rpc_core=trace,kaspa_grpc_core=trace,consensus=trace,kaspa_core=trace) 2>&1 | tee ~/rusty-kaspa.log
+    (cargo run --bin apsakd -- --loglevel info,apsak_rpc_core=trace,apsak_grpc_core=trace,consensus=trace,apsak_core=trace) 2>&1 | tee ~/rusty-apsak.log
     ```
     In this command we set the `loglevel` to `INFO`.
 

@@ -1,10 +1,10 @@
 use crate::tasks::{subscription::submitter::SubscribeCommand, Task};
 use async_channel::Sender;
 use async_trait::async_trait;
-use kaspa_addresses::Address;
-use kaspa_core::warn;
-use kaspa_grpc_client::GrpcClient;
-use kaspa_utils::triggers::SingleTrigger;
+use apsak_addresses::Address;
+use apsak_core::warn;
+use apsak_grpc_client::GrpcClient;
+use apsak_utils::triggers::SingleTrigger;
 use std::{
     sync::Arc,
     time::{Duration, Instant},

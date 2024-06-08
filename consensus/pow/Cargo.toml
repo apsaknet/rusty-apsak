@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-pow"
-description = "Kaspa proof-of-work"
+name = "apsak-pow"
+description = "apsaK proof-of-work"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -14,11 +14,11 @@ wasm32-sdk = []
 
 [dependencies]
 js-sys.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-consensus-client.workspace = true
-kaspa-hashes.workspace = true
-kaspa-math.workspace = true
-kaspa-utils.workspace = true
+apsak-consensus-core.workspace = true
+apsak-consensus-client.workspace = true
+apsak-hashes.workspace = true
+apsak-math.workspace = true
+apsak-utils.workspace = true
 wasm-bindgen.workspace = true
 workflow-wasm.workspace = true
 num.workspace = true

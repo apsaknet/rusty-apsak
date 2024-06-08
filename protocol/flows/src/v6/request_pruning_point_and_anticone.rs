@@ -1,14 +1,14 @@
 //!
 //! In v6 of the P2P protocol we dropped the filling of DAA and GHOSTDAG indices for each trusted entry
-//! since the syncee no longer uses them in the rusty-kaspa design where the full sub-DAG is sent
+//! since the syncee no longer uses them in the rusty-apsak design where the full sub-DAG is sent
 //!
 
 use itertools::Itertools;
-use kaspa_p2p_lib::{
+use apsak_p2p_lib::{
     common::ProtocolError,
     dequeue, dequeue_with_request_id, make_response,
     pb::{
-        self, kaspad_message::Payload, BlockWithTrustedDataV4Message, DoneBlocksWithTrustedDataMessage, PruningPointsMessage,
+        self, apsakd_message::Payload, BlockWithTrustedDataV4Message, DoneBlocksWithTrustedDataMessage, PruningPointsMessage,
         TrustedDataMessage,
     },
     IncomingRoute, Router,

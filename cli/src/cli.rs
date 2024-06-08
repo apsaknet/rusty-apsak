@@ -5,10 +5,10 @@ use crate::modules::miner::Miner;
 use crate::modules::node::Node;
 use crate::notifier::{Notification, Notifier};
 use crate::result::Result;
-use kaspa_daemon::{DaemonEvent, DaemonKind, Daemons};
-use kaspa_wallet_core::rpc::DynRpcApi;
-use kaspa_wallet_core::storage::{IdT, PrvKeyDataInfo};
-use kaspa_wrpc_client::KaspaRpcClient;
+use apsak_daemon::{DaemonEvent, DaemonKind, Daemons};
+use apsak_wallet_core::rpc::DynRpcApi;
+use apsak_wallet_core::storage::{IdT, PrvKeyDataInfo};
+use apsak_wrpc_client::ApsakRpcClient;
 use workflow_core::channel::*;
 use workflow_core::time::Instant;
 use workflow_log::*;
@@ -29,7 +29,7 @@ impl Options {
     }
 }
 
-pub struct KaspaCli {
+pub struct ApsakCli {
     term: Arc<Mutex<Option<Arc<Terminal>>>>,
     wallet: Arc<Wallet>,
     notifications_task_ctl: DuplexChannel,
@@ -45,19 +45,19 @@ pub struct KaspaCli {
     sync_state: Mutex<Option<SyncState>>,
 }
 
-impl From<&KaspaCli> for Arc<Terminal> {
-    fn from(ctx: &KaspaCli) -> Arc<Terminal> {
+impl From<&ApsakCli> for Arc<Terminal> {
+    fn from(ctx: &ApsakCli) -> Arc<Terminal> {
         ctx.term()
     }
 }
 
-impl AsRef<KaspaCli> for KaspaCli {
+impl AsRef<ApsakCli> for ApsakCli {
     fn as_ref(&self) -> &Self {
         self
     }
 }
 
-impl workflow_log::Sink for KaspaCli {
+impl workflow_log::Sink for ApsakCli {
     fn write(&self, _target: Option<&str>, _level: Level, args: &std::fmt::Arguments<'_>) -> bool {
         if let Some(term) = self.try_term() {
             cfg_if! {
@@ -84,7 +84,7 @@ impl workflow_log::Sink for KaspaCli {
     }
 }
 
-impl KaspaCli {
+impl ApsakCli {
     pub fn init() {
         cfg_if! {
             if #[cfg(not(target_arch = "wasm32"))] {
@@ -92,9 +92,9 @@ impl KaspaCli {
                     std::println!("halt");
                     1
                 });
-                kaspa_core::log::init_logger(None, "info");
+                apsak_core::log::init_logger(None, "info");
             } else {
-                kaspa_core::log::set_log_level(LevelFilter::Info);
+                apsak_core::log::set_log_level(LevelFilter::Info);
             }
         }
 
@@ -104,7 +104,7 @@ impl KaspaCli {
     pub async fn try_new_arc(options: Options) -> Result<Arc<Self>> {
         let wallet = Arc::new(Wallet::try_new(Wallet::local_store()?, None, None)?);
 
-        let kaspa_cli = Arc::new(KaspaCli {
+        let apsak_cli = Arc::new(ApsakCli {
             term: Arc::new(Mutex::new(None)),
             wallet,
             notifications_task_ctl: DuplexChannel::oneshot(),
@@ -120,16 +120,16 @@ impl KaspaCli {
             sync_state: Mutex::new(None),
         });
 
-        let term = Arc::new(Terminal::try_new_with_options(kaspa_cli.clone(), options.terminal)?);
+        let term = Arc::new(Terminal::try_new_with_options(apsak_cli.clone(), options.terminal)?);
         term.init().await?;
 
         cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
-                kaspa_cli.init_panic_hook();
+                apsak_cli.init_panic_hook();
             }
         }
 
-        Ok(kaspa_cli)
+        Ok(apsak_cli)
     }
 
     pub fn term(&self) -> Arc<Terminal> {
@@ -164,7 +164,7 @@ impl KaspaCli {
         self.wallet.try_rpc_api().clone()
     }
 
-    pub fn try_rpc_client(&self) -> Option<Arc<KaspaRpcClient>> {
+    pub fn try_rpc_client(&self) -> Option<Arc<ApsakRpcClient>> {
         self.wallet.try_wrpc_client().clone()
     }
 
@@ -218,7 +218,7 @@ impl KaspaCli {
 
     pub async fn handle_daemon_event(self: &Arc<Self>, event: DaemonEvent) -> Result<()> {
         match event.kind() {
-            DaemonKind::Kaspad => {
+            DaemonKind::Apsakd => {
                 let node = self.node.lock().unwrap().clone();
                 if let Some(node) = node {
                     node.handle_event(self, event.into()).await?;
@@ -285,10 +285,10 @@ impl KaspaCli {
                         if let Ok(msg) = msg {
                             match *msg {
                                 Events::WalletPing => {
-                                    // log_info!("Kaspa NG - received wallet ping");
+                                    // log_info!("apsaK NG - received wallet ping");
                                 },
                                 Events::Metrics { network_id : _, metrics : _ } => {
-                                    // log_info!("Kaspa NG - received metrics event {metrics:?}")
+                                    // log_info!("apsaK NG - received metrics event {metrics:?}")
                                 }
                                 Events::Error { message } => { terrorln!(this,"{message}"); },
                                 Events::UtxoProcStart => {},
@@ -306,7 +306,7 @@ impl KaspaCli {
                                     this.term().refresh_prompt();
                                 },
                                 Events::UtxoIndexNotEnabled { .. } => {
-                                    tprintln!(this, "Error: Kaspa node UTXO index is not enabled...")
+                                    tprintln!(this, "Error: apsaK node UTXO index is not enabled...")
                                 },
                                 Events::SyncState { sync_state } => {
 
@@ -326,16 +326,16 @@ impl KaspaCli {
                                     ..
                                 } => {
 
-                                    tprintln!(this, "Connected to Kaspa node version {server_version} at {}", url.unwrap_or("N/A".to_string()));
+                                    tprintln!(this, "Connected to apsaK node version {server_version} at {}", url.unwrap_or("N/A".to_string()));
 
                                     let is_open = this.wallet.is_open();
 
                                     if !is_synced {
                                         if is_open {
-                                            terrorln!(this, "Unable to update the wallet state - Kaspa node is currently syncing with the network...");
+                                            terrorln!(this, "Unable to update the wallet state - apsaK node is currently syncing with the network...");
 
                                         } else {
-                                            terrorln!(this, "Kaspa node is currently syncing with the network, please wait for the sync to complete...");
+                                            terrorln!(this, "apsaK node is currently syncing with the network, please wait for the sync to complete...");
                                         }
                                     }
 
@@ -667,24 +667,24 @@ impl KaspaCli {
             tprintln!(self, "{}", style("shutting down...").magenta());
 
             let miner = self.daemons().try_cpu_miner();
-            let kaspad = self.daemons().try_kaspad();
+            let apsakd = self.daemons().try_apsakd();
 
             if let Some(miner) = miner.as_ref() {
                 miner.mute(false).await?;
                 miner.stop().await?;
             }
 
-            if let Some(kaspad) = kaspad.as_ref() {
-                kaspad.mute(false).await?;
-                kaspad.stop().await?;
+            if let Some(apsakd) = apsakd.as_ref() {
+                apsakd.mute(false).await?;
+                apsakd.stop().await?;
             }
 
             if let Some(miner) = miner.as_ref() {
                 miner.join().await?;
             }
 
-            if let Some(kaspad) = kaspad.as_ref() {
-                kaspad.join().await?;
+            if let Some(apsakd) = apsakd.as_ref() {
+                apsakd.join().await?;
             }
 
             self.term().exit().await;
@@ -741,7 +741,7 @@ impl KaspaCli {
 }
 
 #[async_trait]
-impl Cli for KaspaCli {
+impl Cli for ApsakCli {
     fn init(self: Arc<Self>, term: &Arc<Terminal>) -> TerminalResult<()> {
         *self.term.lock().unwrap() = Some(term.clone());
 
@@ -797,7 +797,7 @@ impl Cli for KaspaCli {
 
         if let Some(descriptor) = self.wallet.descriptor() {
             let title = descriptor.title.unwrap_or(descriptor.filename);
-            if title.to_lowercase().as_str() != "kaspa" {
+            if title.to_lowercase().as_str() != "apsak" {
                 prompt.push(title);
             }
 
@@ -820,13 +820,13 @@ impl Cli for KaspaCli {
     }
 }
 
-impl cli::Context for KaspaCli {
+impl cli::Context for ApsakCli {
     fn term(&self) -> Arc<Terminal> {
         self.term.lock().unwrap().as_ref().unwrap().clone()
     }
 }
 
-impl KaspaCli {}
+impl ApsakCli {}
 
 #[allow(dead_code)]
 async fn select_item<T>(
@@ -915,14 +915,14 @@ where
 //     Ok(selection.unwrap())
 // }
 
-pub async fn kaspa_cli(terminal_options: TerminalOptions, banner: Option<String>) -> Result<()> {
-    KaspaCli::init();
+pub async fn apsak_cli(terminal_options: TerminalOptions, banner: Option<String>) -> Result<()> {
+    ApsakCli::init();
 
     let options = Options::new(terminal_options, None);
-    let cli = KaspaCli::try_new_arc(options).await?;
+    let cli = ApsakCli::try_new_arc(options).await?;
 
     let banner =
-        banner.unwrap_or_else(|| format!("Kaspa Cli Wallet v{} (type 'help' for list of commands)", env!("CARGO_PKG_VERSION")));
+        banner.unwrap_or_else(|| format!("apsaK Cli Wallet v{} (type 'help' for list of commands)", env!("CARGO_PKG_VERSION")));
     cli.term().writeln(banner);
 
     // redirect the global log output to terminal
@@ -995,7 +995,7 @@ mod panic_handler {
     }
 }
 
-impl KaspaCli {
+impl ApsakCli {
     pub fn init_panic_hook(self: &Arc<Self>) {
         let this = self.clone();
         let handler = move |info: &std::panic::PanicInfo| {

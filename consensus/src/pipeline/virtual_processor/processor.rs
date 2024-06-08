@@ -46,7 +46,7 @@ use crate::{
         window::WindowManager,
     },
 };
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     acceptance_data::AcceptanceData,
     block::{BlockTemplate, MutableBlock, TemplateBuildMode, TemplateTransactionSelector},
     blockstatus::BlockStatus::{StatusDisqualifiedFromChain, StatusUTXOValid},
@@ -62,23 +62,23 @@ use kaspa_consensus_core::{
     },
     BlockHashSet, ChainPath,
 };
-use kaspa_consensus_notify::{
+use apsak_consensus_notify::{
     notification::{
         NewBlockTemplateNotification, Notification, SinkBlueScoreChangedNotification, UtxosChangedNotification,
         VirtualChainChangedNotification, VirtualDaaScoreChangedNotification,
     },
     root::ConsensusNotificationRoot,
 };
-use kaspa_consensusmanager::SessionLock;
-use kaspa_core::{debug, info, time::unix_now, trace, warn};
-use kaspa_database::prelude::{StoreError, StoreResultEmptyTuple, StoreResultExtensions};
-use kaspa_hashes::Hash;
-use kaspa_muhash::MuHash;
-use kaspa_notify::{events::EventType, notifier::Notify};
+use apsak_consensusmanager::SessionLock;
+use apsak_core::{debug, info, time::unix_now, trace, warn};
+use apsak_database::prelude::{StoreError, StoreResultEmptyTuple, StoreResultExtensions};
+use apsak_hashes::Hash;
+use apsak_muhash::MuHash;
+use apsak_notify::{events::EventType, notifier::Notify};
 
 use crossbeam_channel::{Receiver as CrossbeamReceiver, Sender as CrossbeamSender};
 use itertools::Itertools;
-use kaspa_utils::binary_heap::BinaryHeapExtensions;
+use apsak_utils::binary_heap::BinaryHeapExtensions;
 use parking_lot::{RwLock, RwLockUpgradableReadGuard};
 use rand::{seq::SliceRandom, Rng};
 use rayon::{
@@ -957,7 +957,7 @@ impl VirtualStateProcessor {
         let storage_mass_activated = virtual_state.daa_score > self.storage_mass_activation_daa_score;
         let hash_merkle_root = calc_hash_merkle_root_with_options(txs.iter(), storage_mass_activated);
 
-        let accepted_id_merkle_root = kaspa_merkle::calc_merkle_root(virtual_state.accepted_tx_ids.iter().copied());
+        let accepted_id_merkle_root = apsak_merkle::calc_merkle_root(virtual_state.accepted_tx_ids.iter().copied());
         let utxo_commitment = virtual_state.multiset.clone().finalize();
         // Past median time is the exclusive lower bound for valid block time, so we increase by 1 to get the valid min
         let min_block_time = virtual_state.past_median_time + 1;

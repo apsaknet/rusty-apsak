@@ -1,28 +1,28 @@
 {
-  "name": "kaspa",
+  "name": "apsak",
   "version": "0.13.5",
-  "description": "Kaspa SDK",
+  "description": "apsaK SDK",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kaspanet/rusty-kaspa.git"
+    "url": "git+https://github.com/apsaknet/rusty-apsak.git"
   },
   "keywords": [
-    "kaspa",
+    "apsak",
     "wasm",
     "sdk"
   ],
-  "author": "Kaspa developers",
+  "author": "apsaK developers",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kaspanet/rusty-kaspa/issues"
+    "url": "https://github.com/apsaknet/rusty-apsak/issues"
   },
-  "homepage": "https://github.com/kaspanet/rusty-kaspa#readme",
+  "homepage": "https://github.com/apsaknet/rusty-apsak#readme",
   "dependencies": {
     "websocket": "1.0.34",
-    "kaspa-wasm": "0.13.5"
+    "apsak-wasm": "0.13.5"
   }
 }

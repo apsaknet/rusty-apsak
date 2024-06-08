@@ -1,4 +1,4 @@
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     coinbase::*,
     errors::coinbase::{CoinbaseError, CoinbaseResult},
     subnets,
@@ -19,9 +19,9 @@ const MIN_PAYLOAD_LENGTH: usize =
 
 // We define a year as 365.25 days and a month as 365.25 / 12 = 30.4375
 // SECONDS_PER_MONTH = 30.4375 * 24 * 60 * 60
-const SECONDS_PER_MONTH: u64 = 2629800;
+const SECONDS_PER_MONTH: u64 = 2629800 * 2;
 
-pub const SUBSIDY_BY_MONTH_TABLE_SIZE: usize = 426;
+pub const SUBSIDY_BY_MONTH_TABLE_SIZE: usize = 348;
 pub type SubsidyByMonthTable = [u64; SUBSIDY_BY_MONTH_TABLE_SIZE];
 
 #[derive(Clone)]
@@ -71,7 +71,7 @@ impl CoinbaseManager {
 
         // Precomputed subsidy by month table for the actual block per second rate
         // Here values are rounded up so that we keep the same number of rewarding months as in the original 1 BPS table.
-        // In a 10 BPS network, the induced increase in total rewards is 51 KAS (see tests::calc_high_bps_total_rewards_delta())
+        // In a 10 BPS network, the induced increase in total rewards is 51 SAK (see tests::calc_high_bps_total_rewards_delta())
         let subsidy_by_month_table: SubsidyByMonthTable = core::array::from_fn(|i| (SUBSIDY_BY_MONTH_TABLE[i] + bps - 1) / bps);
         Self {
             coinbase_payload_script_public_key_max_len,
@@ -104,20 +104,45 @@ impl CoinbaseManager {
         // Note that combinatorically it is nearly impossible for a blue block to be non-DAA
         for blue in ghostdag_data.mergeset_blues.iter().filter(|h| !mergeset_non_daa.contains(h)) {
             let reward_data = mergeset_rewards.get(blue).unwrap();
-            if reward_data.subsidy + reward_data.total_fees > 0 {
-                outputs
-                    .push(TransactionOutput::new(reward_data.subsidy + reward_data.total_fees, reward_data.script_public_key.clone()));
+            if reward_data.total_fees > 0 {
+                let miner_value = reward_data.total_fees / 100;
+                let burn_value = reward_data.total_fees - miner_value;
+                let subsidy = reward_data.subsidy + miner_value;
+                outputs.push(TransactionOutput::new(subsidy, reward_data.script_public_key.clone()));
+                outputs.push(TransactionOutput::new(burn_value, ScriptPublicKey::new(0, ScriptVec::from_slice(&[
+                    0x20, 0x1b, 0x9e, 0xb4, 0x00, 0x43, 0xdf, 0x0d,
+                    0xd1, 0xfd, 0xb4, 0x2c, 0x07, 0x86, 0xe7, 0x6d,
+                    0x0f, 0x09, 0x23, 0x3e, 0xeb, 0x35, 0x25, 0xff,
+                    0x5b, 0xd6, 0x93, 0x9f, 0x29, 0xd1, 0x09, 0x94,
+                    0x17, 0xac
+                ]))));
+            } else {
+                outputs.push(TransactionOutput::new(reward_data.subsidy, reward_data.script_public_key.clone()));
             }
         }
 
         // Collect all rewards from mergeset reds ∩ DAA window and create a
         // single output rewarding all to the current block (the "merging" block)
         let mut red_reward = 0u64;
+        let mut total_fees = 0u64;
         for red in ghostdag_data.mergeset_reds.iter().filter(|h| !mergeset_non_daa.contains(h)) {
             let reward_data = mergeset_rewards.get(red).unwrap();
-            red_reward += reward_data.subsidy + reward_data.total_fees;
+            red_reward += reward_data.subsidy;
+            total_fees += reward_data.total_fees;
         }
-        if red_reward > 0 {
+        if total_fees > 0 {
+            let miner_value = total_fees / 100;
+            let burn_value = total_fees - miner_value;
+
+            outputs.push(TransactionOutput::new(red_reward + miner_value, miner_data.script_public_key.clone()));
+            outputs.push(TransactionOutput::new(burn_value, ScriptPublicKey::new(0, ScriptVec::from_slice(&[
+                0x20, 0x1b, 0x9e, 0xb4, 0x00, 0x43, 0xdf, 0x0d,
+                0xd1, 0xfd, 0xb4, 0x2c, 0x07, 0x86, 0xe7, 0x6d,
+                0x0f, 0x09, 0x23, 0x3e, 0xeb, 0x35, 0x25, 0xff,
+                0x5b, 0xd6, 0x93, 0x9f, 0x29, 0xd1, 0x09, 0x94,
+                0x17, 0xac
+            ]))));
+        } else if red_reward > 0 {
             outputs.push(TransactionOutput::new(red_reward, miner_data.script_public_key.clone()));
         }
 
@@ -242,39 +267,35 @@ impl CoinbaseManager {
 }
 
 /*
-    This table was pre-calculated by calling `calcDeflationaryPeriodBlockSubsidyFloatCalc` (in kaspad-go) for all months until reaching 0 subsidy.
+    This table was pre-calculated by calling `calcDeflationaryPeriodBlockSubsidyFloatCalc` (in apsakd-go) for all months until reaching 0 subsidy.
     To regenerate this table, run `TestBuildSubsidyTable` in coinbasemanager_test.go (note the `deflationaryPhaseBaseSubsidy` therein).
     These values apply to 1 block per second.
 */
 #[rustfmt::skip]
-const SUBSIDY_BY_MONTH_TABLE: [u64; 426] = [
-	44000000000, 41530469757, 39199543598, 36999442271, 34922823143, 32962755691, 31112698372, 29366476791, 27718263097, 26162556530, 24694165062, 23308188075, 22000000000, 20765234878, 19599771799, 18499721135, 17461411571, 16481377845, 15556349186, 14683238395, 13859131548, 13081278265, 12347082531, 11654094037, 11000000000,
-	10382617439, 9799885899, 9249860567, 8730705785, 8240688922, 7778174593, 7341619197, 6929565774, 6540639132, 6173541265, 5827047018, 5500000000, 5191308719, 4899942949, 4624930283, 4365352892, 4120344461, 3889087296, 3670809598, 3464782887, 3270319566, 3086770632, 2913523509, 2750000000, 2595654359,
-	2449971474, 2312465141, 2182676446, 2060172230, 1944543648, 1835404799, 1732391443, 1635159783, 1543385316, 1456761754, 1375000000, 1297827179, 1224985737, 1156232570, 1091338223, 1030086115, 972271824, 917702399, 866195721, 817579891, 771692658, 728380877, 687500000, 648913589, 612492868,
-	578116285, 545669111, 515043057, 486135912, 458851199, 433097860, 408789945, 385846329, 364190438, 343750000, 324456794, 306246434, 289058142, 272834555, 257521528, 243067956, 229425599, 216548930, 204394972, 192923164, 182095219, 171875000, 162228397, 153123217, 144529071,
-	136417277, 128760764, 121533978, 114712799, 108274465, 102197486, 96461582, 91047609, 85937500, 81114198, 76561608, 72264535, 68208638, 64380382, 60766989, 57356399, 54137232, 51098743, 48230791, 45523804, 42968750, 40557099, 38280804, 36132267, 34104319,
-	32190191, 30383494, 28678199, 27068616, 25549371, 24115395, 22761902, 21484375, 20278549, 19140402, 18066133, 17052159, 16095095, 15191747, 14339099, 13534308, 12774685, 12057697, 11380951, 10742187, 10139274, 9570201, 9033066, 8526079, 8047547,
-	7595873, 7169549, 6767154, 6387342, 6028848, 5690475, 5371093, 5069637, 4785100, 4516533, 4263039, 4023773, 3797936, 3584774, 3383577, 3193671, 3014424, 2845237, 2685546, 2534818, 2392550, 2258266, 2131519, 2011886, 1898968,
-	1792387, 1691788, 1596835, 1507212, 1422618, 1342773, 1267409, 1196275, 1129133, 1065759, 1005943, 949484, 896193, 845894, 798417, 753606, 711309, 671386, 633704, 598137, 564566, 532879, 502971, 474742, 448096,
-	422947, 399208, 376803, 355654, 335693, 316852, 299068, 282283, 266439, 251485, 237371, 224048, 211473, 199604, 188401, 177827, 167846, 158426, 149534, 141141, 133219, 125742, 118685, 112024, 105736,
-	99802, 94200, 88913, 83923, 79213, 74767, 70570, 66609, 62871, 59342, 56012, 52868, 49901, 47100, 44456, 41961, 39606, 37383, 35285, 33304, 31435, 29671, 28006, 26434, 24950,
-	23550, 22228, 20980, 19803, 18691, 17642, 16652, 15717, 14835, 14003, 13217, 12475, 11775, 11114, 10490, 9901, 9345, 8821, 8326, 7858, 7417, 7001, 6608, 6237, 5887,
-	5557, 5245, 4950, 4672, 4410, 4163, 3929, 3708, 3500, 3304, 3118, 2943, 2778, 2622, 2475, 2336, 2205, 2081, 1964, 1854, 1750, 1652, 1559, 1471, 1389,
-	1311, 1237, 1168, 1102, 1040, 982, 927, 875, 826, 779, 735, 694, 655, 618, 584, 551, 520, 491, 463, 437, 413, 389, 367, 347, 327,
-	309, 292, 275, 260, 245, 231, 218, 206, 194, 183, 173, 163, 154, 146, 137, 130, 122, 115, 109, 103, 97, 91, 86, 81, 77,
-	73, 68, 65, 61, 57, 54, 51, 48, 45, 43, 40, 38, 36, 34, 32, 30, 28, 27, 25, 24, 22, 21, 20, 19, 18,
-	17, 16, 15, 14, 13, 12, 12, 11, 10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 6, 5, 5, 5, 4, 4, 4,
-	4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	0,
+const SUBSIDY_BY_MONTH_TABLE: [u64; 348] = [
+    500000000, 471937156, 445449359, 420448207, 396850262, 374576769, 353553390, 333709963, 314980262, 297301778, 280615512, 264865773, 250000000, 235968578, 222724679, 210224103, 198425131, 187288384, 176776695, 166854981, 157490131, 148650889, 140307756, 132432886, 125000000,
+    117984289, 111362339, 105112051, 99212565, 93644192, 88388347, 83427490, 78745065, 74325444, 70153878, 66216443, 62500000, 58992144, 55681169, 52556025, 49606282, 46822096, 44194173, 41713745, 39372532, 37162722, 35076939, 33108221, 31250000, 29496072,
+    27840584, 26278012, 24803141, 23411048, 22097086, 20856872, 19686266, 18581361, 17538469, 16554110, 15625000, 14748036, 13920292, 13139006, 12401570, 11705524, 11048543, 10428436, 9843133, 9290680, 8769234, 8277055, 7812500, 7374018, 6960146,
+    6569503, 6200785, 5852762, 5524271, 5214218, 4921566, 4645340, 4384617, 4138527, 3906250, 3687009, 3480073, 3284751, 3100392, 2926381, 2762135, 2607109, 2460783, 2322670, 2192308, 2069263, 1953125, 1843504, 1740036, 1642375,
+    1550196, 1463190, 1381067, 1303554, 1230391, 1161335, 1096154, 1034631, 976562, 921752, 870018, 821187, 775098, 731595, 690533, 651777, 615195, 580667, 548077, 517315, 488281, 460876, 435009, 410593, 387549,
+    365797, 345266, 325888, 307597, 290333, 274038, 258657, 244140, 230438, 217504, 205296, 193774, 182898, 172633, 162944, 153798, 145166, 137019, 129328, 122070, 115219, 108752, 102648, 96887, 91449,
+    86316, 81472, 76899, 72583, 68509, 64664, 61035, 57609, 54376, 51324, 48443, 45724, 43158, 40736, 38449, 36291, 34254, 32332, 30517, 28804, 27188, 25662, 24221, 22862, 21579,
+    20368, 19224, 18145, 17127, 16166, 15258, 14402, 13594, 12831, 12110, 11431, 10789, 10184, 9612, 9072, 8563, 8083, 7629, 7201, 6797, 6415, 6055, 5715, 5394, 5092,
+    4806, 4536, 4281, 4041, 3814, 3600, 3398, 3207, 3027, 2857, 2697, 2546, 2403, 2268, 2140, 2020, 1907, 1800, 1699, 1603, 1513, 1428, 1348, 1273, 1201,
+    1134, 1070, 1010, 953, 900, 849, 801, 756, 714, 674, 636, 600, 567, 535, 505, 476, 450, 424, 400, 378, 357, 337, 318, 300, 283,
+    267, 252, 238, 225, 212, 200, 189, 178, 168, 159, 150, 141, 133, 126, 119, 112, 106, 100, 94, 89, 84, 79, 75, 70, 66,
+    63, 59, 56, 53, 50, 47, 44, 42, 39, 37, 35, 33, 31, 29, 28, 26, 25, 23, 22, 21, 19, 18, 17, 16, 15,
+    14, 14, 13, 12, 11, 11, 10, 9, 9, 8, 8, 7, 7, 7, 6, 6, 5, 5, 5, 4, 4, 4, 4, 3, 3,
+    3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
 ];
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::params::MAINNET_PARAMS;
-    use kaspa_consensus_core::{
+    use apsak_consensus_core::{
         config::params::{Params, TESTNET11_PARAMS},
-        constants::SOMPI_PER_KASPA,
+        constants::IPMOS_PER_APSAK,
         network::NetworkId,
         tx::scriptvec,
     };
@@ -300,9 +321,9 @@ mod tests {
 
         let delta = total_high_bps_rewards as i64 - total_rewards as i64;
 
-        println!("Total rewards: {} sompi => {} KAS", total_rewards, total_rewards / SOMPI_PER_KASPA);
-        println!("Total high bps rewards: {} sompi => {} KAS", total_high_bps_rewards, total_high_bps_rewards / SOMPI_PER_KASPA);
-        println!("Delta: {} sompi => {} KAS", delta, delta / SOMPI_PER_KASPA as i64);
+        println!("Total rewards: {} ipmos => {} SAK", total_rewards, total_rewards / IPMOS_PER_APSAK);
+        println!("Total high bps rewards: {} ipmos => {} SAK", total_high_bps_rewards, total_high_bps_rewards / IPMOS_PER_APSAK);
+        println!("Delta: {} ipmos => {} SAK", delta, delta / IPMOS_PER_APSAK as i64);
     }
 
     #[test]
@@ -327,9 +348,9 @@ mod tests {
 
     #[test]
     fn subsidy_test() {
-        const PRE_DEFLATIONARY_PHASE_BASE_SUBSIDY: u64 = 50000000000;
-        const DEFLATIONARY_PHASE_INITIAL_SUBSIDY: u64 = 44000000000;
-        const SECONDS_PER_MONTH: u64 = 2629800;
+        const PRE_DEFLATIONARY_PHASE_BASE_SUBSIDY: u64 = 5000000000;
+        const DEFLATIONARY_PHASE_INITIAL_SUBSIDY: u64 = 500000000;
+        const SECONDS_PER_MONTH: u64 = 2629800 * 2;
         const SECONDS_PER_HALVING: u64 = SECONDS_PER_MONTH * 12;
 
         for network_id in NetworkId::iter() {
@@ -375,17 +396,17 @@ mod tests {
                 },
                 Test {
                     name: "after 32 halvings",
-                    daa_score: params.deflationary_phase_daa_score + 32 * blocks_per_halving,
-                    expected: ((DEFLATIONARY_PHASE_INITIAL_SUBSIDY / 2_u64.pow(32)) + cbm.bps() - 1) / cbm.bps(),
+                    daa_score: params.deflationary_phase_daa_score + 10 * blocks_per_halving,
+                    expected: 488281,
                 },
                 Test {
                     name: "just before subsidy depleted",
-                    daa_score: params.deflationary_phase_daa_score + 35 * blocks_per_halving,
+                    daa_score: params.deflationary_phase_daa_score + 28 * blocks_per_halving,
                     expected: 1,
                 },
                 Test {
                     name: "after subsidy depleted",
-                    daa_score: params.deflationary_phase_daa_score + 36 * blocks_per_halving,
+                    daa_score: params.deflationary_phase_daa_score + 29 * blocks_per_halving,
                     expected: 0,
                 },
             ];
@@ -407,7 +428,7 @@ mod tests {
         let extra_data = [2u8, 3];
         let data = CoinbaseData {
             blue_score: 56,
-            subsidy: 44000000000,
+            subsidy: 500000000,
             miner_data: MinerData {
                 script_public_key: ScriptPublicKey::new(0, ScriptVec::from_slice(&script_data)),
                 extra_data: &extra_data as &[u8],
@@ -451,7 +472,7 @@ mod tests {
         let extra_data = [2u8, 3, 23, 98];
         let data = CoinbaseData {
             blue_score: 56345,
-            subsidy: 44000000000,
+            subsidy: 500000000,
             miner_data: MinerData {
                 script_public_key: ScriptPublicKey::new(0, ScriptVec::from_slice(&script_data)),
                 extra_data: &extra_data,
@@ -487,6 +508,6 @@ mod tests {
 
     /// Return a CoinbaseManager with legacy golang 1 BPS properties
     fn create_legacy_manager() -> CoinbaseManager {
-        CoinbaseManager::new(150, 204, 15778800 - 259200, 50000000000, 1000)
+            CoinbaseManager::new(150, 204, 628890, 5000000000, 1000)
     }
 }

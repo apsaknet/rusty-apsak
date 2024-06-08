@@ -1,20 +1,20 @@
 use indexmap::IndexSet;
 use itertools::Itertools;
-use kaspa_consensus::consensus::Consensus;
-use kaspa_consensus::model::stores::virtual_state::VirtualStateStoreReader;
-use kaspa_consensus::params::Params;
-use kaspa_consensus::processes::mass::MassCalculator;
-use kaspa_consensus_core::api::ConsensusApi;
-use kaspa_consensus_core::block::{Block, TemplateBuildMode, TemplateTransactionSelector};
-use kaspa_consensus_core::coinbase::MinerData;
-use kaspa_consensus_core::sign::sign;
-use kaspa_consensus_core::subnets::SUBNETWORK_ID_NATIVE;
-use kaspa_consensus_core::tx::{
+use apsak_consensus::consensus::Consensus;
+use apsak_consensus::model::stores::virtual_state::VirtualStateStoreReader;
+use apsak_consensus::params::Params;
+use apsak_consensus::processes::mass::MassCalculator;
+use apsak_consensus_core::api::ConsensusApi;
+use apsak_consensus_core::block::{Block, TemplateBuildMode, TemplateTransactionSelector};
+use apsak_consensus_core::coinbase::MinerData;
+use apsak_consensus_core::sign::sign;
+use apsak_consensus_core::subnets::SUBNETWORK_ID_NATIVE;
+use apsak_consensus_core::tx::{
     MutableTransaction, ScriptPublicKey, ScriptVec, Transaction, TransactionInput, TransactionOutpoint, TransactionOutput, UtxoEntry,
 };
-use kaspa_consensus_core::utxo::utxo_view::UtxoView;
-use kaspa_core::trace;
-use kaspa_utils::sim::{Environment, Process, Resumption, Suspension};
+use apsak_consensus_core::utxo::utxo_view::UtxoView;
+use apsak_core::trace;
+use apsak_utils::sim::{Environment, Process, Resumption, Suspension};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 use rand_distr::{Distribution, Exp};
@@ -38,7 +38,7 @@ impl TemplateTransactionSelector for OnetimeTxSelector {
         self.txs.take().unwrap()
     }
 
-    fn reject_selection(&mut self, _tx_id: kaspa_consensus_core::tx::TransactionId) {
+    fn reject_selection(&mut self, _tx_id: apsak_consensus_core::tx::TransactionId) {
         unimplemented!()
     }
 
@@ -153,7 +153,7 @@ impl Miner {
                 let signed_tx = sign(mutable_tx, schnorr_key);
                 let mass = self
                     .mass_calculator
-                    .calc_tx_overall_mass(&signed_tx.as_verifiable(), None, kaspa_consensus::processes::mass::Kip9Version::Alpha)
+                    .calc_tx_overall_mass(&signed_tx.as_verifiable(), None, apsak_consensus::processes::mass::Kip9Version::Alpha)
                     .unwrap();
                 signed_tx.tx.set_mass(mass);
                 let mut signed_tx = signed_tx.tx;

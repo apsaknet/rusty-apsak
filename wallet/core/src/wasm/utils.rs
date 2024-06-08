@@ -1,6 +1,6 @@
 use crate::result::Result;
 use js_sys::BigInt;
-use kaspa_consensus_core::network::{NetworkType, NetworkTypeT};
+use apsak_consensus_core::network::{NetworkType, NetworkTypeT};
 use wasm_bindgen::prelude::*;
 use workflow_wasm::prelude::*;
 
@@ -8,39 +8,39 @@ use workflow_wasm::prelude::*;
 extern "C" {
     #[wasm_bindgen(typescript_type = "bigint | number | HexString")]
     #[derive(Clone, Debug)]
-    pub type ISompiToKaspa;
+    pub type IipmoSToapsaK;
 }
 
-/// Convert a Kaspa string to Sompi represented by bigint.
+/// Convert a apsaK string to ipmoS represented by bigint.
 /// This function provides correct precision handling and
 /// can be used to parse user input.
 /// @category Wallet SDK
-#[wasm_bindgen(js_name = "kaspaToSompi")]
-pub fn kaspa_to_sompi(kaspa: String) -> Option<BigInt> {
-    crate::utils::try_kaspa_str_to_sompi(kaspa).ok().flatten().map(Into::into)
+#[wasm_bindgen(js_name = "apsakToipmoS")]
+pub fn apsak_to_ipmos(apsak: String) -> Option<BigInt> {
+    crate::utils::try_apsak_str_to_ipmos(apsak).ok().flatten().map(Into::into)
 }
 
 ///
-/// Convert Sompi to a string representation of the amount in Kaspa.
+/// Convert ipmoS to a string representation of the amount in apsaK.
 ///
 /// @category Wallet SDK
 ///
-#[wasm_bindgen(js_name = "sompiToKaspaString")]
-pub fn sompi_to_kaspa_string(sompi: ISompiToKaspa) -> Result<String> {
-    let sompi = sompi.try_as_u64()?;
-    Ok(crate::utils::sompi_to_kaspa_string(sompi))
+#[wasm_bindgen(js_name = "ipmosToapsaKString")]
+pub fn ipmos_to_apsak_string(ipmos: IipmoSToapsaK) -> Result<String> {
+    let ipmos = ipmos.try_as_u64()?;
+    Ok(crate::utils::ipmos_to_apsak_string(ipmos))
 }
 
 ///
-/// Format a Sompi amount to a string representation of the amount in Kaspa with a suffix
-/// based on the network type (e.g. `KAS` for mainnet, `TKAS` for testnet,
-/// `SKAS` for simnet, `DKAS` for devnet).
+/// Format a ipmoS amount to a string representation of the amount in apsaK with a suffix
+/// based on the network type (e.g. `SAK` for mainnet, `TSAK` for testnet,
+/// `SSAK` for simnet, `DSAK` for devnet).
 ///
 /// @category Wallet SDK
 ///
-#[wasm_bindgen(js_name = "sompiToKaspaStringWithSuffix")]
-pub fn sompi_to_kaspa_string_with_suffix(sompi: ISompiToKaspa, network: &NetworkTypeT) -> Result<String> {
-    let sompi = sompi.try_as_u64()?;
+#[wasm_bindgen(js_name = "ipmosToapsaKStringWithSuffix")]
+pub fn ipmos_to_apsak_string_with_suffix(ipmos: IipmoSToapsaK, network: &NetworkTypeT) -> Result<String> {
+    let ipmos = ipmos.try_as_u64()?;
     let network_type = NetworkType::try_from(network)?;
-    Ok(crate::utils::sompi_to_kaspa_string_with_suffix(sompi, &network_type))
+    Ok(crate::utils::ipmos_to_apsak_string_with_suffix(ipmos, &network_type))
 }

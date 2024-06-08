@@ -19,9 +19,9 @@ use crate::tx::PaymentOutput;
 use crate::tx::{Fees, Generator, GeneratorSettings, GeneratorSummary, PaymentDestination, PendingTransaction, Signer};
 use crate::utxo::balance::{AtomicBalance, BalanceStrings};
 use crate::utxo::UtxoContextBinding;
-use kaspa_bip32::{ChildNumber, ExtendedPrivateKey, PrivateKey};
-use kaspa_consensus_client::UtxoEntryReference;
-use kaspa_wallet_keys::derivation::gen0::WalletDerivationManagerV0;
+use apsak_bip32::{ChildNumber, ExtendedPrivateKey, PrivateKey};
+use apsak_consensus_client::UtxoEntryReference;
+use apsak_wallet_keys::derivation::gen0::WalletDerivationManagerV0;
 use workflow_core::abortable::Abortable;
 
 /// Notification callback type used by [`Account::sweep`] and [`Account::send`].
@@ -292,7 +292,7 @@ pub trait Account: AnySync + Send + Sync + 'static {
         payment_secret: Option<Secret>,
         abortable: &Abortable,
         notifier: Option<GenerationNotifier>,
-    ) -> Result<(GeneratorSummary, Vec<kaspa_hashes::Hash>)> {
+    ) -> Result<(GeneratorSummary, Vec<apsak_hashes::Hash>)> {
         let keydata = self.prv_key_data(wallet_secret).await?;
         let signer = Arc::new(Signer::new(self.clone().as_dyn_arc(), keydata, payment_secret));
         let settings =
@@ -319,17 +319,17 @@ pub trait Account: AnySync + Send + Sync + 'static {
     async fn send(
         self: Arc<Self>,
         destination: PaymentDestination,
-        priority_fee_sompi: Fees,
+        priority_fee_ipmos: Fees,
         payload: Option<Vec<u8>>,
         wallet_secret: Secret,
         payment_secret: Option<Secret>,
         abortable: &Abortable,
         notifier: Option<GenerationNotifier>,
-    ) -> Result<(GeneratorSummary, Vec<kaspa_hashes::Hash>)> {
+    ) -> Result<(GeneratorSummary, Vec<apsak_hashes::Hash>)> {
         let keydata = self.prv_key_data(wallet_secret).await?;
         let signer = Arc::new(Signer::new(self.clone().as_dyn_arc(), keydata, payment_secret));
 
-        let settings = GeneratorSettings::try_new_with_account(self.clone().as_dyn_arc(), destination, priority_fee_sompi, payload)?;
+        let settings = GeneratorSettings::try_new_with_account(self.clone().as_dyn_arc(), destination, priority_fee_ipmos, payload)?;
 
         let generator = Generator::try_new(settings, Some(signer), Some(abortable))?;
 
@@ -352,13 +352,13 @@ pub trait Account: AnySync + Send + Sync + 'static {
     async fn transfer(
         self: Arc<Self>,
         destination_account_id: AccountId,
-        transfer_amount_sompi: u64,
-        priority_fee_sompi: Fees,
+        transfer_amount_ipmos: u64,
+        priority_fee_ipmos: Fees,
         wallet_secret: Secret,
         payment_secret: Option<Secret>,
         abortable: &Abortable,
         notifier: Option<GenerationNotifier>,
-    ) -> Result<(GeneratorSummary, Vec<kaspa_hashes::Hash>)> {
+    ) -> Result<(GeneratorSummary, Vec<apsak_hashes::Hash>)> {
         let keydata = self.prv_key_data(wallet_secret).await?;
         let signer = Arc::new(Signer::new(self.clone().as_dyn_arc(), keydata, payment_secret));
 
@@ -369,13 +369,13 @@ pub trait Account: AnySync + Send + Sync + 'static {
             .ok_or_else(|| Error::AccountNotFound(destination_account_id))?;
 
         let destination_address = destination_account.receive_address()?;
-        let final_transaction_destination = PaymentDestination::from(PaymentOutput::new(destination_address, transfer_amount_sompi));
+        let final_transaction_destination = PaymentDestination::from(PaymentOutput::new(destination_address, transfer_amount_ipmos));
         let final_transaction_payload = None;
 
         let settings = GeneratorSettings::try_new_with_account(
             self.clone().as_dyn_arc(),
             final_transaction_destination,
-            priority_fee_sompi,
+            priority_fee_ipmos,
             final_transaction_payload,
         )?
         .utxo_context_transfer(destination_account.utxo_context());
@@ -400,11 +400,11 @@ pub trait Account: AnySync + Send + Sync + 'static {
     async fn estimate(
         self: Arc<Self>,
         destination: PaymentDestination,
-        priority_fee_sompi: Fees,
+        priority_fee_ipmos: Fees,
         payload: Option<Vec<u8>>,
         abortable: &Abortable,
     ) -> Result<GeneratorSummary> {
-        let settings = GeneratorSettings::try_new_with_account(self.as_dyn_arc(), destination, priority_fee_sompi, payload)?;
+        let settings = GeneratorSettings::try_new_with_account(self.as_dyn_arc(), destination, priority_fee_ipmos, payload)?;
 
         let generator = Generator::try_new(settings, None, Some(abortable))?;
 
@@ -665,36 +665,36 @@ mod tests {
     use super::create_private_keys;
     use super::ExtendedPrivateKey;
     use crate::imports::LEGACY_ACCOUNT_KIND;
-    use kaspa_addresses::Address;
-    use kaspa_addresses::Prefix;
-    use kaspa_bip32::secp256k1::SecretKey;
-    use kaspa_bip32::PrivateKey;
-    use kaspa_bip32::SecretKeyExt;
-    use kaspa_wallet_keys::derivation::gen0::PubkeyDerivationManagerV0;
+    use apsak_addresses::Address;
+    use apsak_addresses::Prefix;
+    use apsak_bip32::secp256k1::SecretKey;
+    use apsak_bip32::PrivateKey;
+    use apsak_bip32::SecretKeyExt;
+    use apsak_wallet_keys::derivation::gen0::PubkeyDerivationManagerV0;
     use std::str::FromStr;
 
     fn gen0_receive_addresses() -> Vec<&'static str> {
         vec![
-            "kaspatest:qqnapngv3zxp305qf06w6hpzmyxtx2r99jjhs04lu980xdyd2ulwwmx9evrfz",
-            "kaspatest:qqfwmv2jm7dsuju9wz27ptdm4e28qh6evfsm66uf2vf4fxmpxfqgym4m2fcyp",
-            "kaspatest:qpcerqk4ltxtyprv9096wrlzjx5mnrlw4fqce6hnl3axy7tkvyjxypjc5dyqs",
-            "kaspatest:qr9m4h44ghmyz4wagktx8kgmh9zj8h8q0f6tc87wuad5xvzkdlwd6uu9plg2c",
-            "kaspatest:qrkxylqkyjtkjr5zs4z5wjmhmj756e84pa05amcw3zn8wdqjvn4tcc2gcqhrw",
-            "kaspatest:qp3w5h9hp9ude4vjpllsm4qpe8rcc5dmeealkl0cnxlgtj4ly7rczqxcdamvr",
-            "kaspatest:qpqen78dezzj4w7rae4n6kvahlr6wft7jy3lcul78709asxksgxc2kr9fgv6j",
-            "kaspatest:qq7upgj3g8klaylc4etwhlmr70t24wu4n4qrlayuw44yd8wx40seje27ah2x7",
-            "kaspatest:qqt2jzgzwy04j8np6ne4g0akmq4gj3fha0gqupr2mjj95u5utzxqvv33mzpcu",
-            "kaspatest:qpcnt3vscphae5q8h576xkufhtuqvntg0ves8jnthgfaxy8ajek8zz3jcg4de",
-            "kaspatest:qz7wzgzvnadgp6v4u6ua9f3hltaa3cv8635mvzlepa63ttt72c6m208g48q0p",
-            "kaspatest:qpqtsd4flc0n4g720mjwk67tnc46xv9ns5xs2khyvlvszy584ej4xq9adw9h9",
-            "kaspatest:qq4uy92hzh9eauypps060g2k7zv2xv9fsgc5gxkwgsvlhc7tw4a3gk5rnpc0k",
-            "kaspatest:qqgfhd3ur2v2xcf35jggre97ar3awl0h62qlmmaaq28dfrhwzgjnxntdugycr",
-            "kaspatest:qzuflj6tgzwjujsym9ap6dvqz9zfwnmkta68fjulax09clh8l4rfslj9j9nnt",
-            "kaspatest:qz6645a8rrf0hmrdvyr9uj673lrr9zwhjvvrytqpjsjdet23czvc784e84lfe",
-            "kaspatest:qz2fvhmk996rmmg44ht0s79gnw647ehu8ncmpf3sf6txhkfmuzuxssceg9sw0",
-            "kaspatest:qr9aflwylzdu99z2z25lzljyeszhs7j02zhfdazydgahq2vg6x8w7nfp3juqq",
-            "kaspatest:qzen7nh0lmzvujlye5sv3nwgwdyew2zp9nz5we7pay65wrt6kfxd6khwja56q",
-            "kaspatest:qq74jrja2mh3wn6853g8ywpfy9nlg0uuzchvpa0cmnvds4tfnpjj5tqgnqm4f",
+            "apsaktest:qqnapngv3zxp305qf06w6hpzmyxtx2r99jjhs04lu980xdyd2ulwwmx9evrfz",
+            "apsaktest:qqfwmv2jm7dsuju9wz27ptdm4e28qh6evfsm66uf2vf4fxmpxfqgym4m2fcyp",
+            "apsaktest:qpcerqk4ltxtyprv9096wrlzjx5mnrlw4fqce6hnl3axy7tkvyjxypjc5dyqs",
+            "apsaktest:qr9m4h44ghmyz4wagktx8kgmh9zj8h8q0f6tc87wuad5xvzkdlwd6uu9plg2c",
+            "apsaktest:qrkxylqkyjtkjr5zs4z5wjmhmj756e84pa05amcw3zn8wdqjvn4tcc2gcqhrw",
+            "apsaktest:qp3w5h9hp9ude4vjpllsm4qpe8rcc5dmeealkl0cnxlgtj4ly7rczqxcdamvr",
+            "apsaktest:qpqen78dezzj4w7rae4n6kvahlr6wft7jy3lcul78709asxksgxc2kr9fgv6j",
+            "apsaktest:qq7upgj3g8klaylc4etwhlmr70t24wu4n4qrlayuw44yd8wx40seje27ah2x7",
+            "apsaktest:qqt2jzgzwy04j8np6ne4g0akmq4gj3fha0gqupr2mjj95u5utzxqvv33mzpcu",
+            "apsaktest:qpcnt3vscphae5q8h576xkufhtuqvntg0ves8jnthgfaxy8ajek8zz3jcg4de",
+            "apsaktest:qz7wzgzvnadgp6v4u6ua9f3hltaa3cv8635mvzlepa63ttt72c6m208g48q0p",
+            "apsaktest:qpqtsd4flc0n4g720mjwk67tnc46xv9ns5xs2khyvlvszy584ej4xq9adw9h9",
+            "apsaktest:qq4uy92hzh9eauypps060g2k7zv2xv9fsgc5gxkwgsvlhc7tw4a3gk5rnpc0k",
+            "apsaktest:qqgfhd3ur2v2xcf35jggre97ar3awl0h62qlmmaaq28dfrhwzgjnxntdugycr",
+            "apsaktest:qzuflj6tgzwjujsym9ap6dvqz9zfwnmkta68fjulax09clh8l4rfslj9j9nnt",
+            "apsaktest:qz6645a8rrf0hmrdvyr9uj673lrr9zwhjvvrytqpjsjdet23czvc784e84lfe",
+            "apsaktest:qz2fvhmk996rmmg44ht0s79gnw647ehu8ncmpf3sf6txhkfmuzuxssceg9sw0",
+            "apsaktest:qr9aflwylzdu99z2z25lzljyeszhs7j02zhfdazydgahq2vg6x8w7nfp3juqq",
+            "apsaktest:qzen7nh0lmzvujlye5sv3nwgwdyew2zp9nz5we7pay65wrt6kfxd6khwja56q",
+            "apsaktest:qq74jrja2mh3wn6853g8ywpfy9nlg0uuzchvpa0cmnvds4tfnpjj5tqgnqm4f",
         ]
     }
 
@@ -725,26 +725,26 @@ mod tests {
 
     fn gen0_change_addresses() -> Vec<&'static str> {
         vec![
-            "kaspatest:qrc0xjaq00fq8qzvrudfuk9msag7whnd72nefwq5d07ks4j4d97kzm0x3ertv",
-            "kaspatest:qpf00utzmaa2u8w9353ssuazsv7fzs605eg00l9luyvcwzwj9cx0z4m8n9p5j",
-            "kaspatest:qrkxek2q6eze7lhg8tq0qw9h890lujvjhtnn5vllrkgj2rgudl6xv3ut9j5mu",
-            "kaspatest:qrn0ga4lddypp9w8eygt9vwk92lagr55e2eqjgkfr09az90632jc6namw09ll",
-            "kaspatest:qzga696vavxtrg0heunvlta5ghjucptll9cfs5x0m2j05s55vtl36uhpauwuk",
-            "kaspatest:qq8ernhu26fgt3ap73jalhzl5u5zuergm9f0dcsa8uy7lmcx875hwl3r894fp",
-            "kaspatest:qrauma73jdn0yfwspr7yf39recvjkk3uy5e4309vjc82qq7sxtskjphgwu0sx",
-            "kaspatest:qzk7yd3ep4def7sv7yhl8m0mr7p75zclycrv0x0jfm0gmwte23k0u5f9dclzy",
-            "kaspatest:qzvm7mnhpkrw52c4p85xd5scrpddxnagzmhmz4v8yt6nawwzgjtavu84ft88x",
-            "kaspatest:qq4feppacdug6p6zk2xf4rw400ps92c9h78gctfcdlucvzzjwzyz7j650nw52",
-            "kaspatest:qryepg9agerq4wdzpv39xxjdytktga53dphvs6r4fdjc0gfyndhk7ytpnl5tv",
-            "kaspatest:qpywh5galz3dd3ndkx96ckpvvf5g8t4adaf0k58y4kgf8w06jt5myjrpluvk6",
-            "kaspatest:qq32grys34737mfe5ud5j2v03cjefynuym27q7jsdt28qy72ucv3sv0teqwvm",
-            "kaspatest:qper47ahktzf9lv67a5e9rmfk35pq4xneufhu97px6tlzd0d4qkaklx7m3f7w",
-            "kaspatest:qqal0t8w2y65a4lm5j5y4maxyy4nuwxj6u364eppj5qpxz9s4l7tknfw0u6r3",
-            "kaspatest:qr7p66q7lmdqcf2vnyus38efx3l4apvqvv5sff66n808mtclef2w7vxh3afnn",
-            "kaspatest:qqx4xydd58qe5csedz3l3q7v02e49rwqnydc425d6jchv02el2gdv4055vh0y",
-            "kaspatest:qzyc9l5azcae7y3yltgnl5k2dzzvngp90a0glsepq0dnz8dvp4jyveezpqse8",
-            "kaspatest:qq705x6hl9qdvr03n0t65esevpvzkkt2xj0faxp6luvd2hk2gr76chxw8xhy5",
-            "kaspatest:qzufchm3cy2ej6f4cjpxpnt3g7c2gn77c320qhrnrjqqskpn7vnzsaxg6z0kd",
+            "apsaktest:qrc0xjaq00fq8qzvrudfuk9msag7whnd72nefwq5d07ks4j4d97kzm0x3ertv",
+            "apsaktest:qpf00utzmaa2u8w9353ssuazsv7fzs605eg00l9luyvcwzwj9cx0z4m8n9p5j",
+            "apsaktest:qrkxek2q6eze7lhg8tq0qw9h890lujvjhtnn5vllrkgj2rgudl6xv3ut9j5mu",
+            "apsaktest:qrn0ga4lddypp9w8eygt9vwk92lagr55e2eqjgkfr09az90632jc6namw09ll",
+            "apsaktest:qzga696vavxtrg0heunvlta5ghjucptll9cfs5x0m2j05s55vtl36uhpauwuk",
+            "apsaktest:qq8ernhu26fgt3ap73jalhzl5u5zuergm9f0dcsa8uy7lmcx875hwl3r894fp",
+            "apsaktest:qrauma73jdn0yfwspr7yf39recvjkk3uy5e4309vjc82qq7sxtskjphgwu0sx",
+            "apsaktest:qzk7yd3ep4def7sv7yhl8m0mr7p75zclycrv0x0jfm0gmwte23k0u5f9dclzy",
+            "apsaktest:qzvm7mnhpkrw52c4p85xd5scrpddxnagzmhmz4v8yt6nawwzgjtavu84ft88x",
+            "apsaktest:qq4feppacdug6p6zk2xf4rw400ps92c9h78gctfcdlucvzzjwzyz7j650nw52",
+            "apsaktest:qryepg9agerq4wdzpv39xxjdytktga53dphvs6r4fdjc0gfyndhk7ytpnl5tv",
+            "apsaktest:qpywh5galz3dd3ndkx96ckpvvf5g8t4adaf0k58y4kgf8w06jt5myjrpluvk6",
+            "apsaktest:qq32grys34737mfe5ud5j2v03cjefynuym27q7jsdt28qy72ucv3sv0teqwvm",
+            "apsaktest:qper47ahktzf9lv67a5e9rmfk35pq4xneufhu97px6tlzd0d4qkaklx7m3f7w",
+            "apsaktest:qqal0t8w2y65a4lm5j5y4maxyy4nuwxj6u364eppj5qpxz9s4l7tknfw0u6r3",
+            "apsaktest:qr7p66q7lmdqcf2vnyus38efx3l4apvqvv5sff66n808mtclef2w7vxh3afnn",
+            "apsaktest:qqx4xydd58qe5csedz3l3q7v02e49rwqnydc425d6jchv02el2gdv4055vh0y",
+            "apsaktest:qzyc9l5azcae7y3yltgnl5k2dzzvngp90a0glsepq0dnz8dvp4jyveezpqse8",
+            "apsaktest:qq705x6hl9qdvr03n0t65esevpvzkkt2xj0faxp6luvd2hk2gr76chxw8xhy5",
+            "apsaktest:qzufchm3cy2ej6f4cjpxpnt3g7c2gn77c320qhrnrjqqskpn7vnzsaxg6z0kd",
         ]
     }
 

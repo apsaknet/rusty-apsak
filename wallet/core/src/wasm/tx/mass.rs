@@ -2,9 +2,9 @@ use crate::imports::NetworkParams;
 use crate::result::Result;
 use crate::tx::mass;
 use crate::wasm::tx::*;
-use kaspa_consensus_client::*;
-use kaspa_consensus_core::config::params::Params;
-use kaspa_consensus_core::tx as cctx;
+use apsak_consensus_client::*;
+use apsak_consensus_core::config::params::Params;
+use apsak_consensus_core::tx as cctx;
 use std::sync::Arc;
 use wasm_bindgen::prelude::*;
 use workflow_wasm::convert::*;
@@ -46,7 +46,7 @@ impl MassCalculator {
     }
 
     /// `minimumRelayTransactionFee()` specifies the minimum transaction fee for a transaction to be accepted to
-    /// the mempool and relayed. It is specified in sompi per 1kg (or 1000 grams) of transaction mass.
+    /// the mempool and relayed. It is specified in ipmos per 1kg (or 1000 grams) of transaction mass.
     ///
     /// `pub(crate) const MINIMUM_RELAY_TRANSACTION_FEE: u64 = 1000;`
     #[wasm_bindgen(js_name=minimumRelayTransactionFee)]
@@ -98,7 +98,7 @@ impl MassCalculator {
             .dyn_into::<js_sys::Array>()?
             .iter()
             .map(TransactionOutput::try_from)
-            .collect::<std::result::Result<Vec<_>, kaspa_consensus_client::error::Error>>()?;
+            .collect::<std::result::Result<Vec<_>, apsak_consensus_client::error::Error>>()?;
         let outputs = outputs.iter().map(|output| self.calc_mass_for_output(output)).collect::<Result<Vec<_>>>()?;
         Ok(outputs.iter().sum())
     }
@@ -109,7 +109,7 @@ impl MassCalculator {
             .dyn_into::<js_sys::Array>()?
             .iter()
             .map(TransactionInput::try_owned_from)
-            .collect::<std::result::Result<Vec<_>, kaspa_consensus_client::error::Error>>()?;
+            .collect::<std::result::Result<Vec<_>, apsak_consensus_client::error::Error>>()?;
         let inputs = inputs.iter().map(|input| self.calc_mass_for_input(input)).collect::<Result<Vec<_>>>()?;
         Ok(inputs.iter().sum())
     }

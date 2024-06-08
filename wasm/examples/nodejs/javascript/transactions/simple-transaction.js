@@ -6,10 +6,10 @@ const {
     PrivateKey,
     Address,
     RpcClient,
-    kaspaToSompi,
+    apsakToipmoS,
     createTransactions,
     initConsolePanicHook
-} = require('../../../../nodejs/kaspa');
+} = require('../../../../nodejs/apsak');
 
 const { encoding, networkId, address: destinationAddressArg } = require("../utils").parseArgs();
 
@@ -55,7 +55,7 @@ initConsolePanicHook();
 
         let { transactions, summary } = await createTransactions({
             entries,
-            outputs: [{ address : destinationAddress, amount : kaspaToSompi(0.00012)}],
+            outputs: [{ address : destinationAddress, amount : apsakToipmoS(0.00012)}],
             priorityFee: 0n,
             changeAddress: sourceAddress,
         });

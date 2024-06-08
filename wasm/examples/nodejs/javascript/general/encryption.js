@@ -1,12 +1,12 @@
-const kaspa = require('../../../../nodejs/kaspa');
+const apsak = require('../../../../nodejs/apsak');
 
-kaspa.initConsolePanicHook();
+apsak.initConsolePanicHook();
 
 (async () => {
 
-    let encrypted = kaspa.encryptXChaCha20Poly1305("my message", "my_password");
+    let encrypted = apsak.encryptXChaCha20Poly1305("my message", "my_password");
     console.log("encrypted:", encrypted);
-    let decrypted = kaspa.decryptXChaCha20Poly1305(encrypted, "my_password");
+    let decrypted = apsak.decryptXChaCha20Poly1305(encrypted, "my_password");
     console.log("decrypted:", decrypted);
 
 })();

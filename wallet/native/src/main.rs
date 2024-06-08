@@ -1,8 +1,8 @@
-use kaspa_cli_lib::{kaspa_cli, TerminalOptions};
+use apsak_cli_lib::{apsak_cli, TerminalOptions};
 
 #[tokio::main]
 async fn main() {
-    let result = kaspa_cli(TerminalOptions::new().with_prompt("$ "), None).await;
+    let result = apsak_cli(TerminalOptions::new().with_prompt("$ "), None).await;
     if let Err(err) = result {
         println!("{err}");
     }

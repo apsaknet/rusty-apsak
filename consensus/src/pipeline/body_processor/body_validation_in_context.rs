@@ -4,10 +4,10 @@ use crate::{
     model::stores::{ghostdag::GhostdagStoreReader, statuses::StatusesStoreReader},
     processes::window::WindowManager,
 };
-use kaspa_consensus_core::block::Block;
-use kaspa_database::prelude::StoreResultExtensions;
-use kaspa_hashes::Hash;
-use kaspa_utils::option::OptionExtensions;
+use apsak_consensus_core::block::Block;
+use apsak_database::prelude::StoreResultExtensions;
+use apsak_hashes::Hash;
+use apsak_utils::option::OptionExtensions;
 use std::sync::Arc;
 
 impl BlockBodyProcessor {
@@ -19,7 +19,7 @@ impl BlockBodyProcessor {
     }
 
     fn check_block_is_not_pruned(self: &Arc<Self>, _block: &Block) -> BlockProcessResult<()> {
-        // TODO: In kaspad code it checks that the block is not in the past of the current tips.
+        // TODO: In apsakd code it checks that the block is not in the past of the current tips.
         // We should decide what's the best indication that a block was pruned.
         Ok(())
     }
@@ -92,14 +92,14 @@ mod tests {
         params::DEVNET_PARAMS,
         processes::{transaction_validator::errors::TxRuleError, window::WindowManager},
     };
-    use kaspa_consensus_core::{
+    use apsak_consensus_core::{
         api::ConsensusApi,
         merkle::calc_hash_merkle_root,
         subnets::SUBNETWORK_ID_NATIVE,
         tx::{Transaction, TransactionInput, TransactionOutpoint},
     };
-    use kaspa_core::assert_match;
-    use kaspa_hashes::Hash;
+    use apsak_core::assert_match;
+    use apsak_hashes::Hash;
 
     #[tokio::test]
     async fn validate_body_in_context_test() {
@@ -165,7 +165,7 @@ mod tests {
             let mut block = consensus.build_block_with_parents_and_transactions(7.into(), vec![6.into()], vec![]);
             block.transactions[0].payload[8..16].copy_from_slice(&(5_u64).to_le_bytes());
             block.header.hash_merkle_root = calc_hash_merkle_root(block.transactions.iter());
-            assert_match!(consensus.validate_and_insert_block(block.to_immutable()).virtual_state_task.await, Err(RuleError::WrongSubsidy(expected,_)) if expected == 44000000000);
+            assert_match!(consensus.validate_and_insert_block(block.to_immutable()).virtual_state_task.await, Err(RuleError::WrongSubsidy(expected,_)) if expected == 500000000);
         }
 
         {

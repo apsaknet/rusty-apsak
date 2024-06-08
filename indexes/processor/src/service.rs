@@ -1,21 +1,21 @@
 use crate::{processor::Processor, IDENT};
-use kaspa_consensus_notify::{
+use apsak_consensus_notify::{
     connection::ConsensusChannelConnection, notification::Notification as ConsensusNotification, notifier::ConsensusNotifier,
 };
-use kaspa_core::{
+use apsak_core::{
     task::service::{AsyncService, AsyncServiceError, AsyncServiceFuture},
     trace, warn,
 };
-use kaspa_index_core::notifier::IndexNotifier;
-use kaspa_notify::{
+use apsak_index_core::notifier::IndexNotifier;
+use apsak_notify::{
     connection::ChannelType,
     events::{EventSwitches, EventType},
     listener::ListenerLifespan,
     scope::{PruningPointUtxoSetOverrideScope, UtxosChangedScope},
     subscription::{context::SubscriptionContext, MutationPolicies, UtxosChangedMutationPolicy},
 };
-use kaspa_utils::{channel::Channel, triggers::SingleTrigger};
-use kaspa_utxoindex::api::UtxoIndexProxy;
+use apsak_utils::{channel::Channel, triggers::SingleTrigger};
+use apsak_utxoindex::api::UtxoIndexProxy;
 use std::sync::Arc;
 
 const INDEX_SERVICE: &str = IDENT;

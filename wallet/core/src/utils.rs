@@ -1,76 +1,76 @@
 //!
-//! Kaspa value formatting and parsing utilities.
+//! apsaK value formatting and parsing utilities.
 //!
 
 use crate::result::Result;
-use kaspa_addresses::Address;
-use kaspa_consensus_core::constants::*;
-use kaspa_consensus_core::network::NetworkType;
+use apsak_addresses::Address;
+use apsak_consensus_core::constants::*;
+use apsak_consensus_core::network::NetworkType;
 use separator::{separated_float, separated_int, separated_uint_with_output, Separatable};
 use workflow_log::style;
 
-pub fn try_kaspa_str_to_sompi<S: Into<String>>(s: S) -> Result<Option<u64>> {
+pub fn try_apsak_str_to_ipmos<S: Into<String>>(s: S) -> Result<Option<u64>> {
     let s: String = s.into();
     let amount = s.trim();
     if amount.is_empty() {
         return Ok(None);
     }
 
-    Ok(Some(str_to_sompi(amount)?))
+    Ok(Some(str_to_ipmos(amount)?))
 }
 
-pub fn try_kaspa_str_to_sompi_i64<S: Into<String>>(s: S) -> Result<Option<i64>> {
+pub fn try_apsak_str_to_ipmos_i64<S: Into<String>>(s: S) -> Result<Option<i64>> {
     let s: String = s.into();
     let amount = s.trim();
     if amount.is_empty() {
         return Ok(None);
     }
 
-    let amount = amount.parse::<f64>()? * SOMPI_PER_KASPA as f64;
+    let amount = amount.parse::<f64>()? * IPMOS_PER_APSAK as f64;
     Ok(Some(amount as i64))
 }
 
 #[inline]
-pub fn sompi_to_kaspa(sompi: u64) -> f64 {
-    sompi as f64 / SOMPI_PER_KASPA as f64
+pub fn ipmos_to_apsak(ipmos: u64) -> f64 {
+    ipmos as f64 / IPMOS_PER_APSAK as f64
 }
 
 #[inline]
-pub fn kaspa_to_sompi(kaspa: f64) -> u64 {
-    (kaspa * SOMPI_PER_KASPA as f64) as u64
+pub fn apsak_to_ipmos(apsak: f64) -> u64 {
+    (apsak * IPMOS_PER_APSAK as f64) as u64
 }
 
 #[inline]
-pub fn sompi_to_kaspa_string(sompi: u64) -> String {
-    sompi_to_kaspa(sompi).separated_string()
+pub fn ipmos_to_apsak_string(ipmos: u64) -> String {
+    ipmos_to_apsak(ipmos).separated_string()
 }
 
 #[inline]
-pub fn sompi_to_kaspa_string_with_trailing_zeroes(sompi: u64) -> String {
-    separated_float!(format!("{:.8}", sompi_to_kaspa(sompi)))
+pub fn ipmos_to_apsak_string_with_trailing_zeroes(ipmos: u64) -> String {
+    separated_float!(format!("{:.8}", ipmos_to_apsak(ipmos)))
 }
 
-pub fn kaspa_suffix(network_type: &NetworkType) -> &'static str {
+pub fn apsak_suffix(network_type: &NetworkType) -> &'static str {
     match network_type {
-        NetworkType::Mainnet => "KAS",
-        NetworkType::Testnet => "TKAS",
-        NetworkType::Simnet => "SKAS",
-        NetworkType::Devnet => "DKAS",
+        NetworkType::Mainnet => "SAK",
+        NetworkType::Testnet => "TSAK",
+        NetworkType::Simnet => "SSAK",
+        NetworkType::Devnet => "DSAK",
     }
 }
 
 #[inline]
-pub fn sompi_to_kaspa_string_with_suffix(sompi: u64, network_type: &NetworkType) -> String {
-    let kas = sompi_to_kaspa_string(sompi);
-    let suffix = kaspa_suffix(network_type);
-    format!("{kas} {suffix}")
+pub fn ipmos_to_apsak_string_with_suffix(ipmos: u64, network_type: &NetworkType) -> String {
+    let sak = ipmos_to_apsak_string(ipmos);
+    let suffix = apsak_suffix(network_type);
+    format!("{sak} {suffix}")
 }
 
 #[inline]
-pub fn sompi_to_kaspa_string_with_trailing_zeroes_and_suffix(sompi: u64, network_type: &NetworkType) -> String {
-    let kas = sompi_to_kaspa_string_with_trailing_zeroes(sompi);
-    let suffix = kaspa_suffix(network_type);
-    format!("{kas} {suffix}")
+pub fn ipmos_to_apsak_string_with_trailing_zeroes_and_suffix(ipmos: u64, network_type: &NetworkType) -> String {
+    let sak = ipmos_to_apsak_string_with_trailing_zeroes(ipmos);
+    let suffix = apsak_suffix(network_type);
+    format!("{sak} {suffix}")
 }
 
 pub fn format_address_colors(address: &Address, range: Option<usize>) -> String {
@@ -90,11 +90,11 @@ pub fn format_address_colors(address: &Address, range: Option<usize>) -> String 
     format!("{prefix}:{left}:{center}:{right}")
 }
 
-fn str_to_sompi(amount: &str) -> Result<u64> {
+fn str_to_ipmos(amount: &str) -> Result<u64> {
     let Some(dot_idx) = amount.find('.') else {
-        return Ok(amount.parse::<u64>()? * SOMPI_PER_KASPA);
+        return Ok(amount.parse::<u64>()? * IPMOS_PER_APSAK);
     };
-    let integer = amount[..dot_idx].parse::<u64>()? * SOMPI_PER_KASPA;
+    let integer = amount[..dot_idx].parse::<u64>()? * IPMOS_PER_APSAK;
     let decimal = &amount[dot_idx + 1..];
     let decimal_len = decimal.len();
     let decimal = if decimal_len == 0 {

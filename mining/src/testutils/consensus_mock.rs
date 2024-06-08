@@ -1,5 +1,5 @@
 use super::coinbase_mock::CoinbaseManagerMock;
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     api::ConsensusApi,
     block::{BlockTemplate, MutableBlock, TemplateBuildMode, TemplateTransactionSelector, VirtualStateApproxId},
     coinbase::MinerData,
@@ -15,8 +15,8 @@ use kaspa_consensus_core::{
     tx::{MutableTransaction, Transaction, TransactionId, TransactionOutpoint, UtxoEntry},
     utxo::utxo_collection::UtxoCollection,
 };
-use kaspa_core::time::unix_now;
-use kaspa_hashes::ZERO_HASH;
+use apsak_core::time::unix_now;
+use apsak_hashes::ZERO_HASH;
 
 use parking_lot::RwLock;
 use std::{collections::HashMap, sync::Arc};

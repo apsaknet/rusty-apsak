@@ -1,6 +1,6 @@
 globalThis.WebSocket = require('websocket').w3cwebsocket; // W3C WebSocket module shim
 
-let kaspa = require('../kaspa/kaspa_wasm');
+let apsak = require('../apsak/apsak_wasm');
 const { parseArgs, guardRpcIsSynced } = require("../utils");
 let {
     RpcClient, UtxoSet, Address, Encoding, UtxoOrdering,
@@ -10,8 +10,8 @@ let {
     createTransaction,
     signTransaction,
     signScriptHash
-} = kaspa;
-kaspa.init_console_panic_hook();
+} = apsak;
+apsak.init_console_panic_hook();
 
 (async () => {
     const args = parseArgs({});
@@ -20,8 +20,8 @@ kaspa.init_console_panic_hook();
     const networkType = args.networkType;
     // Either Encoding.Borsh or Encoding.JSON
     const encoding = args.encoding;
-    // The kaspa address that was passed as an argument or a default one
-    const address = args.address ?? "kaspatest:qz7ulu4c25dh7fzec9zjyrmlhnkzrg4wmf89q7gzr3gfrsj3uz6xjceef60sd";
+    // The apsak address that was passed as an argument or a default one
+    const address = args.address ?? "apsaktest:qz7ulu4c25dh7fzec9zjyrmlhnkzrg4wmf89q7gzr3gfrsj3uz6xjceef60sd";
 
     const rpc = new RpcClient({
         url : "127.0.0.1",
@@ -69,7 +69,7 @@ kaspa.init_console_panic_hook();
 
     const changeAddress = addr;
 
-    const priorityFee = 1500;
+    const priorityFee = 7500;
     const tx = createTransaction(utxoSelection, outputs, changeAddress, priorityFee);
     const scriptHashes = tx.getScriptHashes();
     console.log("scriptHashes", scriptHashes)

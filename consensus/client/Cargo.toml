@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-consensus-client"
-description = "Kaspa consensus client data structures"
+name = "apsak-consensus-client"
+description = "apsaK consensus client data structures"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -13,13 +13,13 @@ wasm32-sdk = []
 wasm32-types = []
 
 [dependencies]
-kaspa-addresses.workspace = true
-kaspa-consensus-core.workspace = true
-kaspa-hashes.workspace = true
-kaspa-math.workspace = true
-kaspa-txscript.workspace = true
-kaspa-utils.workspace = true
-kaspa-wasm-core.workspace = true
+apsak-addresses.workspace = true
+apsak-consensus-core.workspace = true
+apsak-hashes.workspace = true
+apsak-math.workspace = true
+apsak-txscript.workspace = true
+apsak-utils.workspace = true
+apsak-wasm-core.workspace = true
 
 ahash.workspace = true
 cfg-if.workspace = true

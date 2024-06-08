@@ -9,7 +9,7 @@ use crate::{
 use std::{ops::Deref, sync::Arc};
 
 #[cfg(test)]
-use kaspa_addresses::Address;
+use apsak_addresses::Address;
 
 #[derive(Debug)]
 pub struct SubscriptionContextInner {
@@ -83,16 +83,16 @@ mod tests {
         subscription::SubscriptionContext,
     };
     use itertools::Itertools;
-    use kaspa_addresses::{Address, Prefix};
-    use kaspa_alloc::init_allocator_with_default_settings;
-    use kaspa_core::trace;
-    use kaspa_math::Uint256;
+    use apsak_addresses::{Address, Prefix};
+    use apsak_alloc::init_allocator_with_default_settings;
+    use apsak_core::trace;
+    use apsak_math::Uint256;
     use std::collections::{HashMap, HashSet};
     use workflow_perf_monitor::mem::get_process_memory_info;
 
     fn create_addresses(count: usize) -> Vec<Address> {
         (0..count)
-            .map(|i| Address::new(Prefix::Mainnet, kaspa_addresses::Version::PubKey, &Uint256::from_u64(i as u64).to_le_bytes()))
+            .map(|i| Address::new(Prefix::Mainnet, apsak_addresses::Version::PubKey, &Uint256::from_u64(i as u64).to_le_bytes()))
             .collect()
     }
 
@@ -137,7 +137,7 @@ mod tests {
         length_and_capacity: F2,
     ) -> Vec<T> {
         init_allocator_with_default_settings();
-        kaspa_core::log::try_init_logger("INFO,kaspa_notify::subscription::context=trace");
+        apsak_core::log::try_init_logger("INFO,apsak_notify::subscription::context=trace");
         measure_consumed_memory(item_len, num_items, ctor, length_and_capacity)
     }
 
@@ -161,7 +161,7 @@ mod tests {
         const NUM_ITEMS: usize = 5;
 
         init_allocator_with_default_settings();
-        kaspa_core::log::try_init_logger("INFO,kaspa_notify::subscription::context=trace");
+        apsak_core::log::try_init_logger("INFO,apsak_notify::subscription::context=trace");
 
         trace!("Creating addresses...");
         let addresses = create_addresses(ITEM_LEN);
@@ -392,7 +392,7 @@ mod tests {
     //     const NUM_ITEMS: usize = 1_000_000;
 
     //     init_allocator_with_default_settings();
-    //     kaspa_core::log::try_init_logger("INFO,kaspa_notify::subscription::context=trace");
+    //     apsak_core::log::try_init_logger("INFO,apsak_notify::subscription::context=trace");
 
     //     let before = get_process_memory_info().unwrap();
     //     trace!("Creating sets...");

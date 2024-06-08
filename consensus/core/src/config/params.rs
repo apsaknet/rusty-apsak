@@ -8,8 +8,8 @@ use crate::{
     network::{NetworkId, NetworkType},
     BlockLevel, KType,
 };
-use kaspa_addresses::Prefix;
-use kaspa_math::Uint256;
+use apsak_addresses::Prefix;
+use apsak_math::Uint256;
 use std::{
     cmp::min,
     time::{SystemTime, UNIX_EPOCH},
@@ -77,7 +77,7 @@ pub struct Params {
     pub mass_per_sig_op: u64,
     pub max_block_mass: u64,
 
-    /// The parameter for scaling inverse KAS value to mass units (unpublished KIP-0009)
+    /// The parameter for scaling inverse SAK value to mass units (unpublished KIP-0009)
     pub storage_mass_parameter: u64,
 
     /// DAA score from which storage mass calculation and transaction mass field are activated as a consensus rule
@@ -204,7 +204,7 @@ impl Params {
     }
 
     /// Returns the depth at which the anticone of a chain block is final (i.e., is a permanently closed set).
-    /// Based on the analysis at <https://github.com/kaspanet/docs/blob/main/Reference/prunality/Prunality.pdf>
+    /// Based on the analysis at <https://github.com/apsaknet/docs/blob/main/Reference/prunality/Prunality.pdf>
     /// and on the decomposition of merge depth (rule R-I therein) from finality depth (φ)
     pub fn anticone_finalization_depth(&self) -> u64 {
         let anticone_finalization_depth = self.finality_depth
@@ -291,24 +291,10 @@ impl From<NetworkId> for Params {
 
 pub const MAINNET_PARAMS: Params = Params {
     dns_seeders: &[
-        // This DNS seeder is run by Denis Mashkevich
-        "mainnet-dnsseed-1.kaspanet.org",
-        // This DNS seeder is run by Denis Mashkevich
-        "mainnet-dnsseed-2.kaspanet.org",
-        // This DNS seeder is run by Constantine Bytensky
-        "dnsseed.cbytensky.org",
-        // This DNS seeder is run by Georges Künzli
-        "seeder1.kaspad.net",
-        // This DNS seeder is run by Georges Künzli
-        "seeder2.kaspad.net",
-        // This DNS seeder is run by Georges Künzli
-        "seeder3.kaspad.net",
-        // This DNS seeder is run by Georges Künzli
-        "seeder4.kaspad.net",
-        // This DNS seeder is run by Tim
-        "kaspadns.kaspacalc.net",
-        // This DNS seeder is run by supertypo
-        "n-mainnet.kaspa.ws",
+        "seeder-1.apsak.org",
+        "seeder-2.apsak.org",
+        "seeder-3.apsak.org",
+        "seeder-4.apsak.org",
     ],
     net: NetworkId::new(NetworkType::Mainnet),
     genesis: GENESIS,
@@ -333,7 +319,7 @@ pub const MAINNET_PARAMS: Params = Params {
     coinbase_payload_script_public_key_max_len: 150,
     max_coinbase_payload_len: 204,
 
-    // This is technically a soft fork from the Go implementation since kaspad's consensus doesn't
+    // This is technically a soft fork from the Go implementation since apsakd's consensus doesn't
     // check these rules, but in practice it's enforced by the network layer that limits the message
     // size to 1 GB.
     // These values should be lowered to more reasonable amounts on the next planned HF/SF.
@@ -350,14 +336,8 @@ pub const MAINNET_PARAMS: Params = Params {
     storage_mass_parameter: STORAGE_MASS_PARAMETER,
     storage_mass_activation_daa_score: u64::MAX,
 
-    // deflationary_phase_daa_score is the DAA score after which the pre-deflationary period
-    // switches to the deflationary period. This number is calculated as follows:
-    // We define a year as 365.25 days
-    // Half a year in seconds = 365.25 / 2 * 24 * 60 * 60 = 15778800
-    // The network was down for three days shortly after launch
-    // Three days in seconds = 3 * 24 * 60 * 60 = 259200
-    deflationary_phase_daa_score: 15778800 - 259200,
-    pre_deflationary_phase_base_subsidy: 50000000000,
+    deflationary_phase_daa_score: 628890,
+    pre_deflationary_phase_base_subsidy: 5000000000,
     coinbase_maturity: 100,
     skip_proof_of_work: false,
     max_block_level: 225,
@@ -367,7 +347,7 @@ pub const MAINNET_PARAMS: Params = Params {
 pub const TESTNET_PARAMS: Params = Params {
     dns_seeders: &[
         // This DNS seeder is run by Tiram
-        "seeder1-testnet.kaspad.net",
+        "seeder1-testnet.apsakd.net",
     ],
     net: NetworkId::with_suffix(NetworkType::Testnet, 10),
     genesis: TESTNET_GENESIS,
@@ -392,7 +372,7 @@ pub const TESTNET_PARAMS: Params = Params {
     coinbase_payload_script_public_key_max_len: 150,
     max_coinbase_payload_len: 204,
 
-    // This is technically a soft fork from the Go implementation since kaspad's consensus doesn't
+    // This is technically a soft fork from the Go implementation since apsakd's consensus doesn't
     // check these rules, but in practice it's enforced by the network layer that limits the message
     // size to 1 GB.
     // These values should be lowered to more reasonable amounts on the next planned HF/SF.
@@ -416,7 +396,7 @@ pub const TESTNET_PARAMS: Params = Params {
     // The network was down for three days shortly after launch
     // Three days in seconds = 3 * 24 * 60 * 60 = 259200
     deflationary_phase_daa_score: 15778800 - 259200,
-    pre_deflationary_phase_base_subsidy: 50000000000,
+    pre_deflationary_phase_base_subsidy: 5000000000,
     coinbase_maturity: 100,
     skip_proof_of_work: false,
     max_block_level: 250,
@@ -426,9 +406,9 @@ pub const TESTNET_PARAMS: Params = Params {
 pub const TESTNET11_PARAMS: Params = Params {
     dns_seeders: &[
         // This DNS seeder is run by Tiram
-        "seeder1-testnet-11.kaspad.net",
+        "seeder1-testnet-11.apsakd.net",
         // This DNS seeder is run by supertypo
-        "n-testnet-11.kaspa.ws",
+        "n-testnet-11.apsak.ws",
     ],
     net: NetworkId::with_suffix(NetworkType::Testnet, 11),
     genesis: TESTNET11_GENESIS,
@@ -556,7 +536,7 @@ pub const DEVNET_PARAMS: Params = Params {
     coinbase_payload_script_public_key_max_len: 150,
     max_coinbase_payload_len: 204,
 
-    // This is technically a soft fork from the Go implementation since kaspad's consensus doesn't
+    // This is technically a soft fork from the Go implementation since apsakd's consensus doesn't
     // check these rules, but in practice it's enforced by the network layer that limits the message
     // size to 1 GB.
     // These values should be lowered to more reasonable amounts on the next planned HF/SF.
@@ -580,7 +560,7 @@ pub const DEVNET_PARAMS: Params = Params {
     // The network was down for three days shortly after launch
     // Three days in seconds = 3 * 24 * 60 * 60 = 259200
     deflationary_phase_daa_score: 15778800 - 259200,
-    pre_deflationary_phase_base_subsidy: 50000000000,
+    pre_deflationary_phase_base_subsidy: 5000000000,
     coinbase_maturity: 100,
     skip_proof_of_work: false,
     max_block_level: 250,

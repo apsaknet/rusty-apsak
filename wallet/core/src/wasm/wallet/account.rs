@@ -2,8 +2,8 @@ use crate::account as native;
 use crate::imports::*;
 use crate::tx::PaymentOutputs;
 use crate::wasm::utxo::UtxoContext;
-use kaspa_consensus_core::network::NetworkTypeT;
-use kaspa_wallet_keys::keypair::Keypair;
+use apsak_consensus_core::network::NetworkTypeT;
+use apsak_wallet_keys::keypair::Keypair;
 use workflow_core::abortable::Abortable;
 
 ///
@@ -107,7 +107,7 @@ impl TryFrom<&JsValue> for Account {
 
 pub struct AccountSendArgs {
     pub outputs: PaymentOutputs,
-    pub priority_fee_sompi: Option<u64>,
+    pub priority_fee_ipmos: Option<u64>,
     pub include_fees_in_amount: bool,
 
     pub wallet_secret: Secret,
@@ -121,7 +121,7 @@ impl TryFrom<JsValue> for AccountSendArgs {
         if let Some(object) = Object::try_from(&js_value) {
             let outputs = object.get_cast::<PaymentOutputs>("outputs")?.into_owned();
 
-            let priority_fee_sompi = object.get_u64("priorityFee").ok();
+            let priority_fee_ipmos = object.get_u64("priorityFee").ok();
             let include_fees_in_amount = object.get_bool("includeFeesInAmount").unwrap_or(false);
             let abortable = object.get("abortable").ok().and_then(|v| Abortable::try_from(&v).ok()).unwrap_or_default();
 
@@ -129,7 +129,7 @@ impl TryFrom<JsValue> for AccountSendArgs {
             let payment_secret = object.get_value("paymentSecret")?.as_string().map(|s| s.into());
 
             let send_args =
-                AccountSendArgs { outputs, priority_fee_sompi, include_fees_in_amount, wallet_secret, payment_secret, abortable };
+                AccountSendArgs { outputs, priority_fee_ipmos, include_fees_in_amount, wallet_secret, payment_secret, abortable };
 
             Ok(send_args)
         } else {

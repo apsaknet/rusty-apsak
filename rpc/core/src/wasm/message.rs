@@ -3,11 +3,11 @@
 use crate::error::RpcError as Error;
 use crate::error::RpcResult as Result;
 use crate::model::*;
-use kaspa_addresses::Address;
-use kaspa_addresses::AddressOrStringArrayT;
-use kaspa_consensus_client::Transaction;
-use kaspa_consensus_client::UtxoEntryReference;
-use kaspa_rpc_macros::declare_typescript_wasm_interface as declare;
+use apsak_addresses::Address;
+use apsak_addresses::AddressOrStringArrayT;
+use apsak_consensus_client::Transaction;
+use apsak_consensus_client::UtxoEntryReference;
+use apsak_rpc_macros::declare_typescript_wasm_interface as declare;
 pub use serde_wasm_bindgen::from_value;
 use wasm_bindgen::prelude::*;
 use workflow_wasm::convert::*;
@@ -169,8 +169,8 @@ declare! {
      * @category Node RPC
      */
     export interface IGetCoinSupplyResponse {
-        maxSompi: bigint;
-        circulatingSompi: bigint;
+        maxipmoS: bigint;
+        circulatingipmoS: bigint;
     }
     "#,
 }

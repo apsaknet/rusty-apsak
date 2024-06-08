@@ -1,3 +1,3 @@
-import { version } from "../../../../nodejs/kaspa";
+import { version } from "../../../../nodejs/apsak";
 
 console.log("version:", version());

@@ -1,13 +1,13 @@
 <html>
     <head>
         <script type="module">
-            import * as kaspa from './kaspa/kaspa_wasm.js';
-            let {PublicKeyGenerator, createAddress, NetworkType, Mnemonic, XPrv} = kaspa;
+            import * as apsak from './apsak/apsak_wasm.js';
+            let {PublicKeyGenerator, createAddress, NetworkType, Mnemonic, XPrv} = apsak;
             window.XPublicKey = PublicKeyGenerator;
             (async () => {
-                const wasm = await kaspa.default('./kaspa/kaspa_wasm_bg.wasm');
-                console.log("kaspa", kaspa);
-                console.log("version", kaspa.version());
+                const wasm = await apsak.default('./apsak/apsak_wasm_bg.wasm');
+                console.log("apsak", apsak);
+                console.log("version", apsak.version());
                 tests();
             })();
 

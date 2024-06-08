@@ -1,4 +1,4 @@
-use kaspa_consensus_core::constants::TX_VERSION;
+use apsak_consensus_core::constants::TX_VERSION;
 
 pub(crate) const DEFAULT_MAXIMUM_TRANSACTION_COUNT: u64 = 1_000_000;
 pub(crate) const DEFAULT_MAXIMUM_READY_TRANSACTION_COUNT: u64 = 50_000;
@@ -13,12 +13,12 @@ pub(crate) const DEFAULT_ORPHAN_EXPIRE_SCAN_INTERVAL_SECONDS: u64 = 10;
 
 pub(crate) const DEFAULT_MAXIMUM_ORPHAN_TRANSACTION_MASS: u64 = 100_000;
 
-// TODO: when rusty-kaspa nodes run most of the network, consider increasing this value
+// TODO: when rusty-apsak nodes run most of the network, consider increasing this value
 pub(crate) const DEFAULT_MAXIMUM_ORPHAN_TRANSACTION_COUNT: u64 = 50;
 
 /// DEFAULT_MINIMUM_RELAY_TRANSACTION_FEE specifies the minimum transaction fee for a transaction to be accepted to
-/// the mempool and relayed. It is specified in sompi per 1kg (or 1000 grams) of transaction mass.
-pub(crate) const DEFAULT_MINIMUM_RELAY_TRANSACTION_FEE: u64 = 1000;
+/// the mempool and relayed. It is specified in ipmos per 1kg (or 1000 grams) of transaction mass.
+pub(crate) const DEFAULT_MINIMUM_RELAY_TRANSACTION_FEE: u64 = 500000;
 
 /// Standard transaction version range might be different from what consensus accepts, therefore
 /// we define separate values in mempool.
@@ -94,7 +94,7 @@ impl Config {
     }
 
     /// Build a default config.
-    /// The arguments should be obtained from the current consensus [`kaspa_consensus_core::config::params::Params`] instance.
+    /// The arguments should be obtained from the current consensus [`apsak_consensus_core::config::params::Params`] instance.
     pub const fn build_default(target_milliseconds_per_block: u64, relay_non_std_transactions: bool, max_block_mass: u64) -> Self {
         Self {
             maximum_transaction_count: DEFAULT_MAXIMUM_TRANSACTION_COUNT,

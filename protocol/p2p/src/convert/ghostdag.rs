@@ -1,10 +1,10 @@
 use super::{error::ConversionError, option::TryIntoOptionEx};
 use crate::pb as protowire;
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     trusted::{ExternalGhostdagData, TrustedGhostdagData, TrustedHeader},
     BlockHashMap, BlueWorkType, HashMapCustomHasher, KType,
 };
-use kaspa_hashes::Hash;
+use apsak_hashes::Hash;
 use std::sync::Arc;
 
 // ----------------------------------------------------------------------------

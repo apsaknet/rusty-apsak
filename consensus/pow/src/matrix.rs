@@ -1,5 +1,5 @@
 use crate::xoshiro::XoShiRo256PlusPlus;
-use kaspa_hashes::{Hash, KHeavyHash};
+use apsak_hashes::{Hash, KHeavyHash};
 use std::mem::MaybeUninit;
 
 #[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
@@ -99,7 +99,10 @@ impl Matrix {
     }
 
     pub fn heavy_hash(&self, hash: Hash) -> Hash {
-        // SAFETY: An uninitialized MaybrUninit is always safe.
+        let mut hash_bytes = hash.as_bytes();
+        reverse_bytes(&mut hash_bytes);
+        let hash = Hash::from(hash_bytes);
+    	// SAFETY: An uninitialized MaybrUninit is always safe.
         let mut vec: [MaybeUninit<u8>; 64] = unsafe { MaybeUninit::uninit().assume_init() };
         for (i, element) in hash.as_bytes().into_iter().enumerate() {
             vec[2 * i].write(element >> 4);
@@ -121,10 +124,16 @@ impl Matrix {
 
         // Concatenate 4 LSBs back to 8 bit xor with sum1
         product.iter_mut().zip(hash.as_bytes()).for_each(|(p, h)| *p ^= h);
+        let product: [u8; 32] = product.iter().rev().cloned().collect::<Vec<u8>>().try_into().unwrap();
         KHeavyHash::hash(Hash::from_bytes(product))
     }
 }
-
+fn reverse_bytes(input: &mut [u8]) {
+    let len = input.len();
+    for i in 0..len / 2 {
+        input.swap(i, len - 1 - i);
+    }
+}
 pub fn array_from_fn<F, T, const N: usize>(mut cb: F) -> [T; N]
 where
     F: FnMut(usize) -> T,
@@ -141,7 +150,7 @@ where
 mod tests {
     use super::Matrix;
     use crate::xoshiro::XoShiRo256PlusPlus;
-    use kaspa_hashes::Hash;
+    use apsak_hashes::Hash;
 
     #[test]
     fn test_compute_rank() {

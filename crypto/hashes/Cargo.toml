@@ -1,6 +1,6 @@
 [package]
-name = "kaspa-hashes"
-description = "Kaspa hashing functions"
+name = "apsak-hashes"
+description = "apsaK hashing functions"
 rust-version.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -17,7 +17,7 @@ blake2b_simd.workspace = true
 borsh.workspace = true
 faster-hex.workspace = true
 js-sys.workspace = true
-kaspa-utils.workspace = true
+apsak-utils.workspace = true
 keccak = { workspace = true, optional = true }
 once_cell.workspace = true
 serde.workspace = true

@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use kaspa_consensus_core::{
+use apsak_consensus_core::{
     blockhash::{self, BlockHashExtensions, BlockHashes},
     BlockHashMap, BlueWorkType, HashMapCustomHasher,
 };
-use kaspa_hashes::Hash;
-use kaspa_utils::refs::Refs;
+use apsak_hashes::Hash;
+use apsak_utils::refs::Refs;
 
 use crate::{
     model::{

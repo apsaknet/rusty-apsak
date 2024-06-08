@@ -49,14 +49,14 @@ jobs:
         # We're using musl to make the binaries statically linked and portable
         run: |
           cargo install cargo-zigbuild
-          cargo --verbose zigbuild --bin kaspad --bin simpa --bin rothschild --bin kaspa-wallet --release --target x86_64-unknown-linux-gnu.2.27 # Use an older glibc version
+          cargo --verbose zigbuild --bin apsakd --bin simpa --bin rothschild --bin apsak-wallet --release --target x86_64-unknown-linux-gnu.2.27 # Use an older glibc version
           mkdir bin || true
-          cp target/x86_64-unknown-linux-gnu/release/kaspad bin/
+          cp target/x86_64-unknown-linux-gnu/release/apsakd bin/
           cp target/x86_64-unknown-linux-gnu/release/simpa bin/
           cp target/x86_64-unknown-linux-gnu/release/rothschild bin/
-          cp target/x86_64-unknown-linux-gnu/release/kaspa-wallet bin/
-          archive="bin/rusty-kaspa-${{ github.event.release.tag_name }}-linux-gnu-amd64.zip"
-          asset_name="rusty-kaspa-${{ github.event.release.tag_name }}-linux-gnu-amd64.zip"
+          cp target/x86_64-unknown-linux-gnu/release/apsak-wallet bin/
+          archive="bin/rusty-apsak-${{ github.event.release.tag_name }}-linux-gnu-amd64.zip"
+          asset_name="rusty-apsak-${{ github.event.release.tag_name }}-linux-gnu-amd64.zip"
           zip -r "${archive}" ./bin/*
           echo "archive=${archive}" >> $GITHUB_ENV
           echo "asset_name=${asset_name}" >> $GITHUB_ENV
@@ -65,17 +65,17 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          cargo build --bin kaspad --release
+          cargo build --bin apsakd --release
           cargo build --bin simpa --release
           cargo build --bin rothschild --release
-          cargo build --bin kaspa-wallet --release
+          cargo build --bin apsak-wallet --release
           mkdir bin || true
-          cp target/release/kaspad.exe bin/
+          cp target/release/apsakd.exe bin/
           cp target/release/simpa.exe bin/
           cp target/release/rothschild.exe bin/
-          cp target/release/kaspa-wallet.exe bin/
-          archive="bin/rusty-kaspa-${{ github.event.release.tag_name }}-win64.zip"
-          asset_name="rusty-kaspa-${{ github.event.release.tag_name }}-win64.zip"
+          cp target/release/apsak-wallet.exe bin/
+          archive="bin/rusty-apsak-${{ github.event.release.tag_name }}-win64.zip"
+          asset_name="rusty-apsak-${{ github.event.release.tag_name }}-win64.zip"
           powershell "Compress-Archive bin/* \"${archive}\""
           echo "archive=${archive}" >> $GITHUB_ENV
           echo "asset_name=${asset_name}" >> $GITHUB_ENV
@@ -83,17 +83,17 @@ jobs:
       - name: Build on MacOS
         if: runner.os == 'macOS'
         run: |
-          cargo build --bin kaspad --release
+          cargo build --bin apsakd --release
           cargo build --bin simpa --release
           cargo build --bin rothschild --release
-          cargo build --bin kaspa-wallet --release
+          cargo build --bin apsak-wallet --release
           mkdir bin || true
-          cp target/release/kaspad bin/
+          cp target/release/apsakd bin/
           cp target/release/simpa bin/
           cp target/release/rothschild bin/
-          cp target/release/kaspa-wallet bin/
-          archive="bin/rusty-kaspa-${{ github.event.release.tag_name }}-osx.zip"
-          asset_name="rusty-kaspa-${{ github.event.release.tag_name }}-osx.zip"
+          cp target/release/apsak-wallet bin/
+          archive="bin/rusty-apsak-${{ github.event.release.tag_name }}-osx.zip"
+          asset_name="rusty-apsak-${{ github.event.release.tag_name }}-osx.zip"
           zip -r "${archive}" ./bin/*
           echo "archive=${archive}" >> $GITHUB_ENV
           echo "asset_name=${asset_name}" >> $GITHUB_ENV
@@ -176,10 +176,10 @@ jobs:
         run: |
           cd wasm
           bash build-release
-          mv release/kaspa-wasm32-sdk.zip ../kaspa-wasm32-sdk-${{ github.event.release.tag_name }}.zip
+          mv release/apsak-wasm32-sdk.zip ../apsak-wasm32-sdk-${{ github.event.release.tag_name }}.zip
 
-          archive="kaspa-wasm32-sdk-${{ github.event.release.tag_name }}.zip"
-          asset_name="kaspa-wasm32-sdk-${{ github.event.release.tag_name }}.zip"
+          archive="apsak-wasm32-sdk-${{ github.event.release.tag_name }}.zip"
+          asset_name="apsak-wasm32-sdk-${{ github.event.release.tag_name }}.zip"
           echo "archive=${archive}" >> $GITHUB_ENV
           echo "asset_name=${asset_name}" >> $GITHUB_ENV
 
