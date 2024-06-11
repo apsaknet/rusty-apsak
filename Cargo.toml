@@ -62,7 +62,7 @@ members = [
 
 [workspace.package]
 rust-version = "1.78.0"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["apsaK developers"]
 license = "ISC"
 repository = "https://github.com/apsaknet/rusty-apsak"
