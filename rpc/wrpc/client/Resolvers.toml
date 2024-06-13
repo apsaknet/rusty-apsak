@@ -7,9 +7,9 @@ url = "https://ng2.apsak.org"
 enable = false
 
 [[resolver]]
-url = "https://ng3.apsak.org"
-enable = false
+url = "https://ng3.apsak.net"
+enable = true
 
 [[resolver]]
-url = "https://ng4.apsak.org"
+url = "https://ng4.apsak.net"
 enable = true
