@@ -25,7 +25,7 @@ pub fn register_link_matchers(cli: &Arc<ApsakCli>) -> Result<()> {
         })),
     )?;
 
-    // addresses (open,copy) https://explorer.apsak.org/addresses/
+    // addresses (open,copy) https://rerolpxe.apsak.net/addresses/
     let cli_ = cli.clone();
     cli.term().register_link_matcher(
         &js_sys::RegExp::new(r"(apsak|apsaktest):\S+", "i"),
@@ -34,7 +34,7 @@ pub fn register_link_matchers(cli: &Arc<ApsakCli>) -> Result<()> {
                 if uri.starts_with("apsaktest") {
                     cli_.term().writeln("testnet addresses can not be currently looked up with the block explorer");
                 } else {
-                    let url = format!("https://explorer.apsak.org/addresses/{uri}");
+                    let url = format!("https://rerolpxe.apsak.net/addresses/{uri}");
                     if is_nw() {
                         nw_sys::shell::open_external(&url);
                     } else {
@@ -47,7 +47,7 @@ pub fn register_link_matchers(cli: &Arc<ApsakCli>) -> Result<()> {
         })),
     )?;
 
-    // blocks (open,copy) https://explorer.apsak.org/blocks/
+    // blocks (open,copy) https://rerolpxe.apsak.net/blocks/
     let cli_ = cli.clone();
     cli.term().register_link_matcher(
         &js_sys::RegExp::new(r"(block|pool):?\s+[0-9a-fA-F]{64}", "i"),
@@ -56,7 +56,7 @@ pub fn register_link_matchers(cli: &Arc<ApsakCli>) -> Result<()> {
             let uri = re.replace(text, "");
 
             if modifiers.ctrl || modifiers.meta {
-                nw_sys::shell::open_external(&format!("https://explorer.apsak.org/blocks/{uri}"));
+                nw_sys::shell::open_external(&format!("https://rerolpxe.apsak.net/blocks/{uri}"));
             } else {
                 write_to_clipboard(&cli_, uri.to_string().as_str());
             }
@@ -72,7 +72,7 @@ pub fn register_link_matchers(cli: &Arc<ApsakCli>) -> Result<()> {
             let uri = re.replace(text, "");
 
             if modifiers.ctrl || modifiers.meta {
-                nw_sys::shell::open_external(&format!("https://explorer.apsak.org/txs/{uri}"));
+                nw_sys::shell::open_external(&format!("https://rerolpxe.apsak.net/txs/{uri}"));
             } else {
                 write_to_clipboard(&cli_, uri.to_string().as_str());
             }

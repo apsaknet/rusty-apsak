@@ -560,8 +560,8 @@ impl ConsensusApi for Consensus {
         // Part 1: Add samples from pruning point headers:
         if self.config.net.network_type == NetworkType::Mainnet {
             // For mainnet, we add extra data (16 pp headers) from before checkpoint genesis.
-            // Source: https://github.com/apsakgang/apsakd-py-explorer/blob/main/src/tx_timestamp_estimation.ipynb
-            // For context see also: https://github.com/apsakgang/apsakd-py-explorer/blob/main/src/genesis_proof.ipynb
+            // Source: https://github.com/kaspagang/kaspad-py-explorer/blob/main/src/tx_timestamp_estimation.ipynb
+            // For context see also: https://github.com/kaspagang/kaspad-py-explorer/blob/main/src/genesis_proof.ipynb
             const POINTS: &[DaaScoreTimestamp] = &[
                 DaaScoreTimestamp { daa_score: 0, timestamp: 1636298787842 },
                 DaaScoreTimestamp { daa_score: 87133, timestamp: 1636386662010 },
